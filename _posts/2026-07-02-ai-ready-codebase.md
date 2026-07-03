@@ -5,17 +5,6 @@ date: 2026-07-02
 categories: [AI, Engineering, Cost-Optimization]
 tags: [ai-agents, token-optimization, codebase-design, cost-management, cache-strategy]
 ---
-
-## Introduction to AI Agent-Friendly Codebase Design and `CLAUDE.md` Improvement
-
-The speaker introduces methods for designing an **AI-ready codebase** where AI agents do not get lost, drawing on experience from Silicon Valley and Meta.
-
-The lecture also introduces a skill for analyzing how AI-friendly a codebase is.
-
-Topics covered include the problem of **token efficiency**, cost control, and how to turn cost dashboards and cost gates into team-level assets.
-
-The lecture raises the issue that when AI agent operating instructions, such as `CLAUDE.md`, do not match the actual codebase environment or "terrain," agents may perform work inefficiently.
-
 ## What Is an AI-Ready Codebase?
 
 An AI-ready codebase is a codebase designed so that an AI agent can enter a new session and work accurately without losing its way.

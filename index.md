@@ -5,11 +5,11 @@ title: Home
 
 <div class="home-hero">
   <div class="profile-image-wrapper">
-    <img src="/assets/images/pinn-profile.png" alt="Kyungbin Lee">
+    <img src="/assets/images/gpt-profil.jpeg" alt="Kyungbin Lee">
   </div>
   <h1 class="hero-title">Dev Log</h1>
   <p class="hero-subtitle">
-    Field notes on software engineering, AI prompting, GitHub Pages, and the implementation details worth remembering.
+    Software engineering notes, AI implementation patterns, and practical development insights.
   </p>
   <div class="home-buttons">
     <a href="{{ '/posts/' | relative_url }}">Read Notes</a>
