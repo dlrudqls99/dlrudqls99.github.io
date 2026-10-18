@@ -19,8 +19,8 @@ description: >-
   Engineering notes on GitHub Pages, Jekyll, AI prompting, and practical
   implementation details.
 twitter_username: username
-github_username: username
-url: "https://kb0129.github.io" # the base hostname & protocol for your site
+github_username: dlrudqls99
+url: "https://dlrudqls99.github.io" # the base hostname & protocol for your site
 baseurl: "" # the subpath of your site, e.g. /blog
 search_enabled: true
 

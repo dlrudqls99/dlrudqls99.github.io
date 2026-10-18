@@ -109,7 +109,7 @@ bundle update github-pages
 You can also:
 1. Push changes to GitHub
 2. Wait 1-2 minutes for GitHub Pages to build
-3. Visit your site at https://kb0129.github.io
+3. Visit your site at https://dlrudqls99.github.io
 
 ## Before/After Comparison
 
