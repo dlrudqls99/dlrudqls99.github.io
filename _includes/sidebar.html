@@ -1,0 +1,39 @@
+<div class="sb-head">
+  <a href="{{ '/' | relative_url }}" class="sb-brand"><span class="sb-prompt">~/</span>{{ site.title }}</a>
+</div>
+
+<button class="sb-search" type="button" data-search-open>
+  <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+  <span>Search notes</span>
+  <kbd>Ctrl K</kbd>
+</button>
+
+<nav class="sb-nav" aria-label="Site">
+  <a class="sb-link{% if page.url == '/' %} active{% endif %}" href="{{ '/' | relative_url }}">Home</a>
+  <a class="sb-link{% if page.url == '/posts/' %} active{% endif %}" href="{{ '/posts/' | relative_url }}">All notes <span class="count">{{ site.posts.size }}</span></a>
+  <a class="sb-link{% if page.url == '/tags/' %} active{% endif %}" href="{{ '/tags/' | relative_url }}">Tags <span class="count">{{ site.tags.size }}</span></a>
+  <a class="sb-link{% if page.url == '/about/' %} active{% endif %}" href="{{ '/about/' | relative_url }}">About</a>
+
+  <p class="sb-section">Notes</p>
+  {% assign groups = site.posts | group_by_exp: "p", "p.categories | first | default: 'Misc'" | sort: "name" %}
+  {% for g in groups %}
+  <details class="sb-group" open>
+    <summary><span class="chev"></span>{{ g.name }}<span class="count">{{ g.items.size }}</span></summary>
+    <ul>
+      {% for p in g.items %}
+      <li><a class="sb-link{% if p.url == page.url %} active{% endif %}" href="{{ p.url | relative_url }}">{{ p.title }}</a></li>
+      {% endfor %}
+    </ul>
+  </details>
+  {% endfor %}
+</nav>
+
+<div class="sb-foot">
+  <a href="{{ '/about/' | relative_url }}" class="sb-me">
+    <img src="{{ site.author_image | relative_url }}" alt="" width="24" height="24">
+    <span>{{ site.author }}</span>
+  </a>
+  <button id="theme-toggle" class="icon-btn" type="button" aria-label="Toggle light/dark theme">
+    <svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 1 0 9 9 7 7 0 0 1-9-9z"/></svg>
+  </button>
+</div>

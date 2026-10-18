@@ -4,23 +4,24 @@ permalink: /about/
 title: "About"
 ---
 
-<div class="about-profile">
-  <img src="{{ '/assets/images/gpt-profil.jpeg' | relative_url }}" alt="Kyungbin Lee">
+<div class="page about">
+  <div class="who">
+    <img src="{{ site.author_image | relative_url }}" alt="{{ site.author }}" width="56" height="56">
+    <div>
+      <h1>{{ site.author }}</h1>
+      <p class="muted">{{ site.author_role }} · <a href="https://github.com/{{ site.github_username }}">github.com/{{ site.github_username }}</a></p>
+    </div>
+  </div>
+
+  <p>This is my knowledge base. I write down what I learn so I don't have to learn it twice, and I keep it public in case it saves someone else a few hours.</p>
+
+  <h2>What's in here</h2>
+  <ul>
+    <li><strong>AI engineering</strong>: agents, prompting, harness and loop engineering, token costs.</li>
+    <li><strong>Software</strong>: setup notes, design decisions, deployment gotchas.</li>
+    <li><strong>Frontend</strong>: study notes as I build my own apps.</li>
+  </ul>
+
+  <h2>How it's organized</h2>
+  <p>The left tree groups notes by topic. Tags cross-link them, and every note ends with the notes it's linked to. <kbd>Ctrl K</kbd> searches everything.</p>
 </div>
-
-Hello! I'm **Kyungbin Lee**, a Forward Deployed Engineer.
-
-This blog is my digital garden for engineering notes, AI experiments, and implementation details I want to remember.
-
-## What I Write About
-
-I focus on practical technical topics, including:
-
-- **Software Engineering**: Setup notes, design decisions, and deployment gotchas.
-- **AI Prompting**: Prompt engineering patterns, model behavior, and evaluation.
-- **Web Publishing**: GitHub Pages, Jekyll, and blog maintenance.
-- **Technical Experiments**: Practical notes from tools and frameworks I try.
-
-My goal is to document what I learn and share it with the community. Whether you're a beginner or an experienced developer, I hope you find something useful here.
-
-Thanks for visiting!

@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: post
 title: "Building a GitHub Blog from Scratch: A Step-by-Step Guide"
 date: 2025-11-23
 categories:

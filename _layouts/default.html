@@ -1,85 +1,52 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{% if page.title %}{{ page.title }} - {% endif %}{{ site.title }}</title>
-  <meta name="description" content="{{ site.description | default: page.excerpt | strip_html | strip_newlines | truncate: 160 }}">
-
-  <!-- Custom editorial blog CSS -->
+  <title>{% if page.title and page.url != '/' %}{{ page.title }} · {% endif %}{{ site.title }}</title>
+  <meta name="description" content="{{ page.excerpt | default: site.description | strip_html | strip_newlines | truncate: 160 }}">
+  <script>try{document.documentElement.dataset.theme=localStorage.getItem('theme')||'dark'}catch(e){}</script>
   <link rel="stylesheet" href="{{ '/assets/css/style.css' | relative_url }}">
-
-  {% if site.head_custom %}{% include head_custom.html %}{% endif %}
+  {% feed_meta %}
 </head>
 <body>
-  <!-- Custom Header -->
-  <header class="site-header-custom">
-    <div class="header-container">
-      <a href="{{ '/' | relative_url }}" class="site-title-custom">{{ site.title }}</a>
-      <nav class="main-navigation">
-        <ul class="nav-menu">
-          <li><a href="{{ '/' | relative_url }}" {% if page.url == '/' %}class="active"{% endif %}>Home</a></li>
-          <li><a href="{{ '/posts/' | relative_url }}" {% if page.url == '/posts/' %}class="active"{% endif %}>Posts</a></li>
-          <li><a href="{{ '/about/' | relative_url }}" {% if page.url == '/about/' %}class="active"{% endif %}>About</a></li>
-        </ul>
-      </nav>
-    </div>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="topbar">
+    <button class="icon-btn" id="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">
+      <svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    </button>
+    <a href="{{ '/' | relative_url }}" class="topbar-title">{{ site.title }}</a>
+    <button class="icon-btn" data-search-open aria-label="Search">
+      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+    </button>
   </header>
 
-  <!-- Main Content -->
-  <main class="main-content-custom">
-    <div class="content-wrapper">
-      {{ content }}
-    </div>
-  </main>
+  <div class="shell">
+    <aside class="sidebar" id="sidebar">
+      {% include sidebar.html %}
+    </aside>
+    <div class="backdrop" id="backdrop"></div>
 
-  <!-- Custom Footer -->
-  <footer class="site-footer-custom">
-    <div class="footer-container">
-      {{ site.footer_content }}
-    </div>
-  </footer>
+    <main class="main" id="main">
+      <div class="content">
+        {{ content }}
+      </div>
+      {% if page.layout == 'post' %}
+      <aside class="toc" id="toc" aria-label="On this page">
+        <p class="toc-title">On this page</p>
+        <ul id="toc-list"></ul>
+      </aside>
+      {% endif %}
+    </main>
+  </div>
 
-  <!-- Theme Toggle Button -->
-  <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode">
-    <span class="theme-toggle-icon" id="theme-icon">DARK</span>
-  </button>
+  <dialog id="palette" class="palette">
+    <input id="palette-input" type="search" placeholder="Search notes…" autocomplete="off" spellcheck="false" aria-label="Search notes">
+    <ul id="palette-list" role="listbox"></ul>
+    <p class="palette-hint"><kbd>↑</kbd><kbd>↓</kbd> navigate <kbd>↵</kbd> open <kbd>esc</kbd> close</p>
+  </dialog>
 
-  <!-- Theme Toggle Script -->
-  <script>
-    (function() {
-      const themeToggle = document.getElementById('theme-toggle');
-      const themeIcon = document.getElementById('theme-icon');
-      const html = document.documentElement;
-
-      // Check for saved theme preference or default to 'light'
-      const currentTheme = localStorage.getItem('theme') || 'light';
-
-      // Apply the theme on page load
-      if (currentTheme === 'dark') {
-        html.setAttribute('data-theme', 'dark');
-        themeIcon.textContent = 'LIGHT';
-      } else {
-        html.setAttribute('data-theme', 'light');
-        themeIcon.textContent = 'DARK';
-      }
-
-      // Toggle theme on button click
-      themeToggle.addEventListener('click', function() {
-        const currentTheme = html.getAttribute('data-theme');
-        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-
-        html.setAttribute('data-theme', newTheme);
-        localStorage.setItem('theme', newTheme);
-
-        // Update icon with animation
-        if (newTheme === 'dark') {
-          themeIcon.textContent = 'LIGHT';
-        } else {
-          themeIcon.textContent = 'DARK';
-        }
-      });
-    })();
-  </script>
+  <script src="{{ '/assets/js/kb.js' | relative_url }}" defer></script>
 </body>
 </html>

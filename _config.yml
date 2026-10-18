@@ -1,78 +1,44 @@
-# Welcome to Jekyll!
-#
-# This config file is meant for settings that affect your whole blog, values
-# which you are expected to set up once and rarely edit after that. If you find
-# yourself editing this file very often, consider using Jekyll's data files
-# feature for the data you need to update frequently.
-#
-# For technical reasons, this file is *NOT* reloaded automatically when you use
-# 'bundle exec jekyll serve'. If you change this file, please restart the server process.
-
-# Site settings
-# These are used to personalize your new site. If you look in the HTML files,
-# you will see them accessed via {{ site.title }}, {{ site.email }}, and so on.
-# You can create any custom variable you would like, and they will be accessible
-# in the templates via {{ site.myvariable }}.
-title: "Dev Log"
-email:
+# Site
+title: "Kyungbin's Notes"
 description: >-
-  Engineering notes on GitHub Pages, Jekyll, AI prompting, and practical
-  implementation details.
-twitter_username: username
+  A personal knowledge base on software engineering, AI agents, and the
+  practical details of shipping things.
+author: "Kyungbin Lee"
+author_role: "Forward Deployed Engineer"
+author_image: /assets/images/gpt-profil.jpeg
 github_username: dlrudqls99
-url: "https://dlrudqls99.github.io" # the base hostname & protocol for your site
-baseurl: "" # the subpath of your site, e.g. /blog
-search_enabled: true
+url: "https://dlrudqls99.github.io"
+baseurl: ""
 
-# Build settings
+# Build
 markdown: kramdown
-# remote_theme: just-the-docs/just-the-docs # Disabled - using custom Notion-inspired design
-# Outputting
+kramdown:
+  input: GFM
+  syntax_highlighter: rouge
 permalink: /:categories/:title/
-paginate: 5 # amount of posts to show
-paginate_path: /page:num/
-timezone: # https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
-
 include:
   - _pages
+exclude:
+  - .harness
+  - harness
+  - Gemfile
+  - Gemfile.lock
+  - README.md
+  - node_modules
+  - vendor
 
-# Exclude from processing.
-# The following items will not be processed, by default. Create a custom list
-# to override the default setting.
-# exclude:
-#   - Gemfile
-#   - Gemfile.lock
-#   - node_modules
-#   - vendor/bundle/
-#   - vendor/cache/
-#   - vendor/gems/
-#   - vendor/ruby/
-
-# Plugins (previously gems:)
 plugins:
-  - jekyll-paginate
   - jekyll-sitemap
-  - jekyll-gist
   - jekyll-feed
-  # - jemoji
   - jekyll-include-cache
   - jekyll-remote-theme
 
-# Custom site settings
-# search_enabled: false  # Disabled for custom theme
-
-# Footer content
-# appears at the bottom of every page's main content
-footer_content: "Copyright &copy; 2025 Kyungbin Lee. Engineering notes and technical experiments."
-
 defaults:
-  # _posts
   - scope:
       path: ""
       type: posts
     values:
-      layout: default
-  # _pages
+      layout: post
   - scope:
       path: "_pages"
       type: pages

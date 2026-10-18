@@ -1,9 +1,0 @@
-{% if site.logo %}
-<div class="site-logo">
-    <a href="{{ '/about/' | relative_url }}">
-        <img src="{{ site.logo | relative_url }}" alt="{{ site.title }}">
-    </a>
-</div>
-{% else %}
-<a class="site-title" href="{{ '/about/' | relative_url }}">{{ site.title }}</a>
-{% endif %}

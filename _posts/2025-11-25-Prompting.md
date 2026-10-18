@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: post
 title: "My Deep Dive into Prompt Engineering: Thoughts on Google’s Latest"
 date: 2025-11-25
 categories:
@@ -9,7 +9,6 @@ tags:
   - Prompt Engineering
 ---
 
-# My Deep Dive into Prompt Engineering: Thoughts on Google’s Latest Guide
 
 I recently spent some time with a whitepaper on Prompt Engineering by Lee Boonstra from Google, and I wanted to share my takeaways. What I loved about this read is that it reinforces the idea that you don't need to be a data scientist to write a prompt—everyone can do it. However, crafting *effective* prompts is an iterative process that requires understanding how the model actually predicts the next token.
 
