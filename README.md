@@ -9,7 +9,7 @@ Personal knowledge base at [dlrudqls99.github.io](https://dlrudqls99.github.io).
 - `_includes/sidebar.html` — note tree, built from `site.posts` grouped by first category.
 - `assets/js/kb.js` — theme toggle, mobile nav, outline, copy buttons, search.
 - `search.json` — search index, fetched on first search.
-- `_sass/custom/custom.scss` — Dracula (dark, default) and GitHub (light) tokens.
+- `_sass/custom/custom.scss` — Persimmon Graphite (dark, default) and Warm Paper (light) tokens.
 
 ## Run locally
 

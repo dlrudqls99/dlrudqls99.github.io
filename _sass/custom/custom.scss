@@ -1,4 +1,4 @@
-/* Knowledge-base theme: Dracula (dark, default) / GitHub (light) */
+/* Knowledge-base theme: Persimmon Graphite (dark, default) / Warm Paper (light) */
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 
@@ -13,46 +13,46 @@
 
 [data-theme="dark"] {
   color-scheme: dark;
-  --bg: #282a36;
-  --bg-side: #21222c;
-  --bg-code: #1e1f29;
-  --bg-hover: #343746;
-  --bg-active: #44475a;
-  --fg: #f8f8f2;
-  --fg-muted: #a9b1d6;
-  --fg-faint: #6272a4;
-  --border: #3b3d4d;
-  --accent: #bd93f9;
-  --accent-2: #8be9fd;
-  --green: #50fa7b;
-  --pink: #ff79c6;
-  --orange: #ffb86c;
-  --yellow: #f1fa8c;
-  --red: #ff5555;
-  --mark: rgba(241, 250, 140, .35);
+  --bg: #171412;
+  --bg-side: #1e1917;
+  --bg-code: #120f0d;
+  --bg-hover: #2a2320;
+  --bg-active: #3a2e28;
+  --fg: #f5efe8;
+  --fg-muted: #b8a99c;
+  --fg-faint: #9a8a7c;
+  --border: #332b26;
+  --accent: #ff7a3d;
+  --accent-2: #e9c46a;
+  --green: #a8c686;
+  --pink: #e06c5c;
+  --orange: #e9a13b;
+  --yellow: #eed49a;
+  --red: #ea6359;
+  --mark: rgba(238, 212, 154, .28);
   --shadow: 0 16px 48px rgba(0, 0, 0, .55);
 }
 
 [data-theme="light"] {
   color-scheme: light;
-  --bg: #ffffff;
-  --bg-side: #f6f8fa;
-  --bg-code: #f6f8fa;
-  --bg-hover: #eaeef2;
-  --bg-active: #dde3ea;
-  --fg: #1f2328;
-  --fg-muted: #59636e;
-  --fg-faint: #8c959f;
-  --border: #d1d9e0;
-  --accent: #0969da;
-  --accent-2: #0969da;
-  --green: #1a7f37;
-  --pink: #cf222e;
-  --orange: #953800;
-  --yellow: #9a6700;
-  --red: #cf222e;
-  --mark: #fff8c5;
-  --shadow: 0 16px 48px rgba(31, 35, 40, .18);
+  --bg: #fffbf5;
+  --bg-side: #f7f1e8;
+  --bg-code: #f7f1e8;
+  --bg-hover: #efe6d8;
+  --bg-active: #e9dcc7;
+  --fg: #221d19;
+  --fg-muted: #6f6357;
+  --fg-faint: #9a8b7a;
+  --border: #e7ddcf;
+  --accent: #c2410c;
+  --accent-2: #8a6d1d;
+  --green: #4d7c0f;
+  --pink: #b3382e;
+  --orange: #b45309;
+  --yellow: #946b00;
+  --red: #b42318;
+  --mark: #f8e7a9;
+  --shadow: 0 16px 48px rgba(34, 29, 25, .18);
 }
 
 /* ---------- base ---------- */
