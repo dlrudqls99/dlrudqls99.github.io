@@ -60,7 +60,7 @@
   // Search palette
   var dlg = $('#palette'), input = $('#palette-input'), list = $('#palette-list');
   var index = null, results = [], cursor = 0;
-  var base = document.querySelector('script[src$="kb.js"]').getAttribute('src').replace(/assets\/js\/kb\.js(\?.*)?$/, '');
+  var base = document.querySelector('script[src*="kb.js"]').getAttribute('src').replace(/assets\/js\/kb\.js(\?.*)?$/, '');
 
   function openPalette() {
     closeNav();
@@ -115,7 +115,7 @@
 /* Note hover preview (Obsidian-style): hover an internal note link, get a peek. */
 (function () {
   if (!window.matchMedia || !matchMedia('(hover: hover) and (pointer: fine)').matches) return;
-  var script = document.querySelector('script[src$="kb.js"]');
+  var script = document.querySelector('script[src*="kb.js"]');
   if (!script) return;
   var base = script.getAttribute('src').replace(/assets\/js\/kb\.js(\?.*)?$/, '');
   var map = null, loading = false, waiters = [];
@@ -182,7 +182,7 @@
 
 /* Keyboard navigation (g then h/a/g/d) */
 (function () {
-  var script = document.querySelector('script[src$="kb.js"]');
+  var script = document.querySelector('script[src*="kb.js"]');
   if (!script) return;
   var base = script.getAttribute('src').replace(/assets\/js\/kb\.js(\?.*)?$/, '');
   var seq = '', timer = null;
@@ -253,7 +253,7 @@
 (function () {
   var canvas = document.getElementById('local-graph');
   if (!canvas) return;
-  var script = document.querySelector('script[src$="kb.js"]');
+  var script = document.querySelector('script[src*="kb.js"]');
   if (!script) return;
   var base = script.getAttribute('src').replace(/assets\/js\/kb\.js(\?.*)?$/, '');
   fetch(base + 'search.json').then(function (r) { return r.json(); }).then(function (posts) {
