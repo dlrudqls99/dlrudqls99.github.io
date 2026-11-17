@@ -1,7 +1,7 @@
-/* Knowledge-base theme: Ecru Navy (dark, default) / Ecru Paper (light)
-   Palette: Inoue Brothers Brushed Scole Stripe — ecru × navy, plus ink black.
-   Core colors: ecru #E8E1CF · navy #1D2D50 · ash blue #9FB8DC · ink #0B0F16.
-   Dark = the navy stripe (navy ground, ecru text). Light = the ecru base (ecru ground, navy ink). */
+/* Knowledge-base theme: Scole Navy (dark, default) / Scole Paper (light)
+   Inspired by the Inoue Brothers Brushed Scole Stripe — its navy, ash blue and ink,
+   on cool neutral grounds. (Ecru dropped: as a full-screen color it reads yellow.)
+   Core colors: navy #1E3A66 · ash blue #93B4E0 · ink #0C1220 · cool paper #F8F9FB */
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css');
@@ -17,46 +17,46 @@
 
 [data-theme="dark"] {
   color-scheme: dark;
-  --bg: #131e33;
-  --bg-side: #0f1828;
-  --bg-code: #0b0f16;
-  --bg-hover: #1d2c47;
-  --bg-active: #27395c;
-  --fg: #e8e1cf;
-  --fg-muted: #b4bcd0;
-  --fg-faint: #7f8ca3;
-  --border: #263453;
-  --accent: #9fb8dc;
-  --accent-2: #d9cfb4;
-  --green: #a8c3a0;
-  --pink: #9fb8dc;
-  --orange: #c99b62;
-  --yellow: #d9cf9f;
-  --red: #d97a6c;
-  --mark: rgba(159, 184, 220, .32);
-  --shadow: 0 16px 48px rgba(4, 8, 16, .65);
+  --bg: #0c1220;
+  --bg-side: #0a0f1b;
+  --bg-code: #080c15;
+  --bg-hover: #17223c;
+  --bg-active: #1f2e4f;
+  --fg: #edf1f7;
+  --fg-muted: #a7b1c4;
+  --fg-faint: #6e7b93;
+  --border: #1e2a44;
+  --accent: #93b4e0;
+  --accent-2: #c7d5ec;
+  --green: #9cc5a5;
+  --pink: #93b4e0;
+  --orange: #afa8e8;
+  --yellow: #9fbf8f;
+  --red: #de7a6d;
+  --mark: rgba(147, 180, 224, .28);
+  --shadow: 0 16px 48px rgba(2, 6, 14, .6);
 }
 
 [data-theme="light"] {
   color-scheme: light;
-  --bg: #eae3d1;
-  --bg-side: #e1d8c2;
-  --bg-code: #f2ecdd;
-  --bg-hover: #dcd2b8;
-  --bg-active: #cfc2a2;
-  --fg: #131a29;
-  --fg-muted: #46536b;
-  --fg-faint: #79839a;
-  --border: #cfc3a6;
-  --accent: #1d2d50;
-  --accent-2: #4e6a94;
-  --green: #4a7247;
-  --pink: #1d2d50;
-  --orange: #a05c17;
-  --yellow: #7a6420;
+  --bg: #f8f9fb;
+  --bg-side: #eff2f7;
+  --bg-code: #f0f3f8;
+  --bg-hover: #e4eaf2;
+  --bg-active: #d5dfee;
+  --fg: #0e1626;
+  --fg-muted: #48536a;
+  --fg-faint: #7a8699;
+  --border: #dce3ec;
+  --accent: #1e3a66;
+  --accent-2: #44679e;
+  --green: #3e7a4e;
+  --pink: #1e3a66;
+  --orange: #6558c0;
+  --yellow: #5c7228;
   --red: #b3382e;
-  --mark: #ead9a0;
-  --shadow: 0 16px 48px rgba(19, 26, 41, .18);
+  --mark: #dce9f9;
+  --shadow: 0 16px 48px rgba(14, 22, 38, .14);
 }
 
 /* ---------- base ---------- */
