@@ -60,7 +60,7 @@
   // Search palette
   var dlg = $('#palette'), input = $('#palette-input'), list = $('#palette-list');
   var index = null, results = [], cursor = 0;
-  var base = document.querySelector('script[src$="kb.js"]').getAttribute('src').replace(/assets\/js\/kb\.js$/, '');
+  var base = document.querySelector('script[src$="kb.js"]').getAttribute('src').replace(/assets\/js\/kb\.js(\?.*)?$/, '');
 
   function openPalette() {
     closeNav();
@@ -117,7 +117,7 @@
   if (!window.matchMedia || !matchMedia('(hover: hover) and (pointer: fine)').matches) return;
   var script = document.querySelector('script[src$="kb.js"]');
   if (!script) return;
-  var base = script.getAttribute('src').replace(/assets\/js\/kb\.js$/, '');
+  var base = script.getAttribute('src').replace(/assets\/js\/kb\.js(\?.*)?$/, '');
   var map = null, loading = false, waiters = [];
   var card = null, timer = null, currentA = null;
 
@@ -184,7 +184,7 @@
 (function () {
   var script = document.querySelector('script[src$="kb.js"]');
   if (!script) return;
-  var base = script.getAttribute('src').replace(/assets\/js\/kb\.js$/, '');
+  var base = script.getAttribute('src').replace(/assets\/js\/kb\.js(\?.*)?$/, '');
   var seq = '', timer = null;
   document.addEventListener('keydown', function (e) {
     if (e.ctrlKey || e.metaKey || e.altKey) return;
@@ -255,7 +255,7 @@
   if (!canvas) return;
   var script = document.querySelector('script[src$="kb.js"]');
   if (!script) return;
-  var base = script.getAttribute('src').replace(/assets\/js\/kb\.js$/, '');
+  var base = script.getAttribute('src').replace(/assets\/js\/kb\.js(\?.*)?$/, '');
   fetch(base + 'search.json').then(function (r) { return r.json(); }).then(function (posts) {
     var me = null;
     posts.forEach(function (p) { if (p.url === location.pathname) me = p; });
