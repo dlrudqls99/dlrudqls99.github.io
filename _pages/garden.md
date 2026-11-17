@@ -6,15 +6,14 @@ permalink: /garden/
 
 <div class="page garden">
   <h1>🌱 Garden</h1>
-  <p class="lede">How this knowledge base is growing. Notes mature over time — 🌱 Seedling (fresh, still rough), 🌿 Growing (developing), 🌳 Evergreen (polished and stable). Pin a stage with <code>growth:</code> in a note's front matter; otherwise it is estimated from length.</p>
+  <p class="lede">How this knowledge base is growing. Notes mature over time — 🌱 Seedling (fresh, still rough), 🌿 Growing (developing), 🌳 Evergreen (polished and stable). Pin a stage with <code>growth:</code> in a note's front matter; otherwise it is estimated from length and age.</p>
 
   {% assign total_words = 0 %}
   {% assign n_seed = 0 %}{% assign n_grow = 0 %}{% assign n_ever = 0 %}
   {% for p in site.posts %}
     {% assign w = p.content | strip_html | number_of_words %}
     {% assign total_words = total_words | plus: w %}
-    {% assign g = p.growth | default: '' | strip %}
-    {% if g == '' %}{% if w >= 2500 %}{% assign g = 'growing' %}{% else %}{% assign g = 'seedling' %}{% endif %}{% endif %}
+    {% capture g %}{% include growth.html post=p raw=true %}{% endcapture %}
     {% if g == 'evergreen' %}{% assign n_ever = n_ever | plus: 1 %}{% elsif g == 'growing' %}{% assign n_grow = n_grow | plus: 1 %}{% else %}{% assign n_seed = n_seed | plus: 1 %}{% endif %}
   {% endfor %}
   {% assign total = site.posts.size %}
@@ -73,8 +72,7 @@ permalink: /garden/
     <ul class="note-list">
     {% for p in site.posts %}
       {% assign w = p.content | strip_html | number_of_words %}
-      {% assign g = p.growth | default: '' | strip %}
-      {% if g == '' %}{% if w >= 2500 %}{% assign g = 'growing' %}{% else %}{% assign g = 'seedling' %}{% endif %}{% endif %}
+      {% capture g %}{% include growth.html post=p raw=true %}{% endcapture %}
       {% if g == s %}
       <li><a href="{{ p.url | relative_url }}">{{ p.title }}</a><span class="muted">{{ w }} words</span><time datetime="{{ p.date | date_to_xmlschema }}">{{ p.date | date: "%b %-d, %Y" }}</time></li>
       {% endif %}

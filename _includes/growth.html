@@ -1,9 +1,16 @@
 {%- assign g = include.post.growth | default: '' | strip -%}
 {%- if g == '' -%}
   {%- assign w = include.post.content | strip_html | number_of_words -%}
-  {%- if w >= 2500 -%}{%- assign g = 'growing' -%}{%- else -%}{%- assign g = 'seedling' -%}{%- endif -%}
+  {%- assign post_epoch = include.post.date | date: '%s' | plus: 0 -%}
+  {%- assign now_epoch = site.time | date: '%s' | plus: 0 -%}
+  {%- assign age_days = now_epoch | minus: post_epoch | divided_by: 86400 -%}
+  {%- if w >= 1500 -%}{%- assign g = 'growing' -%}
+  {%- elsif age_days >= 90 and w >= 800 -%}{%- assign g = 'growing' -%}
+  {%- else -%}{%- assign g = 'seedling' -%}{%- endif -%}
 {%- endif -%}
+{%- if include.raw -%}{{ g }}{%- else -%}
 {%- if g == 'evergreen' -%}{%- assign gemoji = '🌳' -%}{%- assign glabel = 'Evergreen' -%}
 {%- elsif g == 'growing' -%}{%- assign gemoji = '🌿' -%}{%- assign glabel = 'Growing' -%}
 {%- else -%}{%- assign gemoji = '🌱' -%}{%- assign glabel = 'Seedling' -%}{%- endif -%}
 {%- if include.compact -%}<span class="growth-emoji" title="{{ glabel }}">{{ gemoji }}</span>{%- else -%}<span class="growth-badge growth-{{ g }}">{{ gemoji }} {{ glabel }}</span>{%- endif -%}
+{%- endif -%}
