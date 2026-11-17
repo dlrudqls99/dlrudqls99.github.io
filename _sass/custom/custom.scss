@@ -438,3 +438,33 @@ pre .copy:hover { color: var(--fg); }
   border-radius: var(--radius); padding: 8px 14px; cursor: pointer;
 }
 .random-btn:hover { background: var(--bg-hover); }
+
+/* Local graph */
+#local-graph { display: block; width: 100%; height: 260px; touch-action: none; }
+.local-graph-sec { margin-bottom: 8px; }
+
+/* Callouts */
+.note-body blockquote.callout {
+  border-left: 3px solid var(--accent);
+  background: color-mix(in srgb, var(--accent) 9%, transparent);
+  border-radius: 0 var(--radius) var(--radius) 0;
+  padding: 10px 14px; margin: 16px 0;
+}
+.note-body blockquote.callout p { margin: 4px 0; }
+.callout-title {
+  display: flex; align-items: center; gap: 6px;
+  font-weight: 700; font-size: 13.5px; margin-bottom: 2px;
+  color: var(--accent);
+}
+.note-body blockquote.callout-tip, .note-body blockquote.callout-success { border-left-color: var(--green); background: color-mix(in srgb, var(--green) 10%, transparent); }
+.callout-tip .callout-title, .callout-success .callout-title { color: var(--green); }
+.note-body blockquote.callout-warning { border-left-color: #d9a05b; background: rgba(217, 160, 91, .10); }
+.callout-warning .callout-title { color: #d9a05b; }
+.note-body blockquote.callout-danger { border-left-color: var(--red); background: color-mix(in srgb, var(--red) 10%, transparent); }
+.callout-danger .callout-title { color: var(--red); }
+.note-body blockquote.callout-important, .note-body blockquote.callout-question { border-left-color: var(--accent-2); background: color-mix(in srgb, var(--accent-2) 10%, transparent); }
+.callout-important .callout-title, .callout-question .callout-title { color: var(--accent-2); }
+.note-body blockquote.callout-example { border-left-color: var(--orange); background: color-mix(in srgb, var(--orange) 10%, transparent); }
+.callout-example .callout-title { color: var(--orange); }
+.note-body blockquote.callout-quote { border-left-color: var(--fg-faint); background: var(--bg-code); }
+.callout-quote .callout-title { color: var(--fg-muted); }

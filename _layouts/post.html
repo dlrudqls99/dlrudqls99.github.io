@@ -17,6 +17,8 @@ layout: default
       <span>{{ content | number_of_words | divided_by: 200 | at_least: 1 }} min read</span>
       <span class="dot">·</span>
       {% include growth.html post=page %}
+      <span class="dot" data-views hidden>·</span>
+      <span data-views hidden>👀 <span data-views-count>–</span> views</span>
       {% if page.tags.size > 0 %}
       <span class="dot">·</span>
       {% for t in page.tags %}<a class="chip" href="{{ '/tags/' | relative_url }}#{{ t | slugify }}">#{{ t }}</a>{% endfor %}
@@ -29,6 +31,11 @@ layout: default
   </div>
 
   <footer class="note-foot">
+    <section class="local-graph-sec" id="local-graph-sec" hidden>
+      <p class="label">Around this note</p>
+      <div class="graph-wrap"><canvas id="local-graph"></canvas></div>
+    </section>
+
     {% assign related = "" | split: "" %}
     {% for other in site.posts %}
       {% if other.url == page.url %}{% continue %}{% endif %}

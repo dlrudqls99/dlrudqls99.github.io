@@ -222,3 +222,158 @@
     if (k === 'g') { seq = 'g'; timer = setTimeout(function () { seq = ''; }, 600); }
   });
 })();
+
+/* Obsidian-style callouts: > [!NOTE] Title */
+(function () {
+  var TYPES = {
+    note: ['✎', 'Note'], info: ['ℹ️', 'Info'], tip: ['💡', 'Tip'],
+    success: ['✅', 'Success'], question: ['❓', 'Question'],
+    warning: ['⚠️', 'Warning'], danger: ['⛔', 'Danger'],
+    important: ['❗', 'Important'], example: ['📌', 'Example'], quote: ['❝', 'Quote']
+  };
+  document.querySelectorAll('.note-body blockquote').forEach(function (bq) {
+    var p = bq.querySelector('p');
+    if (!p) return;
+    var parts = p.innerHTML.split(/<br\s*\/?>|\n/);
+    var m = parts[0].match(/^\s*\[!([a-zA-Z]+)\]\s*(.*)$/);
+    if (!m) return;
+    var type = m[1].toLowerCase();
+    if (!TYPES[type]) return;
+    var title = m[2].replace(/<[^>]*>/g, '').trim() || TYPES[type][1];
+    parts[0] = '';
+    var rest = parts.join('<br>').replace(/^(<br>)+/, '');
+    if (rest.trim()) { p.innerHTML = rest; } else { p.remove(); }
+    bq.classList.add('callout', 'callout-' + type);
+    var head = document.createElement('div');
+    head.className = 'callout-title';
+    head.innerHTML = '<span class="callout-icon"></span><span></span>';
+    head.querySelector('.callout-icon').textContent = TYPES[type][0];
+    head.querySelector('span:last-child').textContent = title;
+    bq.insertBefore(head, bq.firstChild);
+  });
+})();
+
+/* GoatCounter per-note view count (shows only when counts are public) */
+(function () {
+  var countEl = document.querySelector('[data-views-count]');
+  if (!countEl) return;
+  fetch('https://dlrudqls99.goatcounter.com/counter' + location.pathname + '.json')
+    .then(function (r) { if (!r.ok) throw new Error('off'); return r.json(); })
+    .then(function (d) {
+      if (!d || d.count == null) return;
+      countEl.textContent = d.count;
+      document.querySelectorAll('[data-views]').forEach(function (el) { el.hidden = false; });
+    })
+    .catch(function () {});
+})();
+
+/* Local graph: this note and its tag-neighbours */
+(function () {
+  var canvas = document.getElementById('local-graph');
+  if (!canvas) return;
+  var script = document.querySelector('script[src$="kb.js"]');
+  if (!script) return;
+  var base = script.getAttribute('src').replace(/assets\/js\/kb\.js$/, '');
+  fetch(base + 'search.json').then(function (r) { return r.json(); }).then(function (posts) {
+    var me = null;
+    posts.forEach(function (p) { if (p.url === location.pathname) me = p; });
+    if (!me) return;
+    function tags(p) { return (p.tags || '').split(' ').filter(Boolean); }
+    function shared(a, b) { return tags(a).filter(function (t) { return tags(b).indexOf(t) >= 0; }).length; }
+    var nodes = [me];
+    posts.forEach(function (p) { if (p.url !== me.url && shared(me, p) > 0) nodes.push(p); });
+    if (nodes.length < 2) return;
+    var sec = document.getElementById('local-graph-sec');
+    if (sec) sec.hidden = false;
+
+    var VAR_NAMES = ['--accent', '--accent-2', '--green', '--orange', '--yellow', '--red'];
+    var FALLBACK = ['#93b4e0', '#c7d5ec', '#9cc5a5', '#afa8e8', '#9fbf8f', '#de7a6d'];
+    var cs = getComputedStyle(document.documentElement);
+    var cats = [];
+    nodes.forEach(function (n) { if (cats.indexOf(n.category) < 0) cats.push(n.category); });
+    var catColor = {};
+    cats.forEach(function (c, k) { catColor[c] = cs.getPropertyValue(VAR_NAMES[k % VAR_NAMES.length]).trim() || FALLBACK[k % FALLBACK.length]; });
+    var fgColor = cs.getPropertyValue('--fg').trim() || '#edf1f7';
+    var borderColor = cs.getPropertyValue('--border').trim() || '#1e2a44';
+
+    var ns = nodes.map(function (p, i) {
+      return { url: p.url, title: p.title, cat: p.category, x: 0.5 + 0.3 * Math.cos(i / nodes.length * Math.PI * 2), y: 0.5 + 0.3 * Math.sin(i / nodes.length * Math.PI * 2), vx: 0, vy: 0, r: i === 0 ? 9 : 6, center: i === 0 };
+    });
+    var edges = [];
+    for (var i = 0; i < nodes.length; i++) for (var j = i + 1; j < nodes.length; j++) {
+      var w = shared(nodes[i], nodes[j]);
+      if (w > 0) edges.push({ a: i, b: j, w: w });
+    }
+    var W = 0, H = 0, dpr = Math.min(window.devicePixelRatio || 1, 2);
+    function resize() {
+      var rect = canvas.getBoundingClientRect();
+      W = rect.width; H = rect.height;
+      canvas.width = W * dpr; canvas.height = H * dpr;
+      canvas.getContext('2d').setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    resize();
+    window.addEventListener('resize', resize);
+    var hover = null;
+    function step() {
+      var i, j;
+      for (i = 0; i < ns.length; i++) for (j = i + 1; j < ns.length; j++) {
+        var a = ns[i], b = ns[j];
+        var dx = a.x - b.x, dy = a.y - b.y;
+        var d2 = dx * dx + dy * dy + 0.0001;
+        var f = Math.min(0.0016 / d2, 0.05), d = Math.sqrt(d2);
+        a.vx += dx / d * f; a.vy += dy / d * f; b.vx -= dx / d * f; b.vy -= dy / d * f;
+      }
+      edges.forEach(function (e) {
+        var a = ns[e.a], b = ns[e.b];
+        var dx = b.x - a.x, dy = b.y - a.y;
+        var d = Math.sqrt(dx * dx + dy * dy) + 0.0001;
+        var f = (d - 0.34) * 0.012 * (1 + e.w * 0.25);
+        a.vx += dx / d * f * d; a.vy += dy / d * f * d; b.vx -= dx / d * f * d; b.vy -= dy / d * f * d;
+      });
+      ns.forEach(function (n) {
+        var pull = n.center ? 0.03 : 0.0016;
+        n.vx += (0.5 - n.x) * pull; n.vy += (0.5 - n.y) * pull;
+        n.vx *= 0.86; n.vy *= 0.86;
+        n.x = Math.max(0.04, Math.min(0.96, n.x + n.vx));
+        n.y = Math.max(0.05, Math.min(0.93, n.y + n.vy));
+      });
+    }
+    function draw() {
+      var ctx = canvas.getContext('2d');
+      ctx.clearRect(0, 0, W, H);
+      edges.forEach(function (e) {
+        var a = ns[e.a], b = ns[e.b];
+        ctx.strokeStyle = catColor[a.cat];
+        ctx.globalAlpha = 0.3 + Math.min(e.w, 3) * 0.1;
+        ctx.lineWidth = 1 + Math.min(e.w, 3) * 0.4;
+        ctx.beginPath(); ctx.moveTo(a.x * W, a.y * H); ctx.lineTo(b.x * W, b.y * H); ctx.stroke();
+      });
+      ctx.globalAlpha = 1;
+      ns.forEach(function (n) {
+        var x = n.x * W, y = n.y * H;
+        ctx.beginPath(); ctx.arc(x, y, n.r, 0, Math.PI * 2);
+        ctx.fillStyle = catColor[n.cat]; ctx.fill();
+        ctx.lineWidth = n.center ? 3 : (hover === n ? 2.5 : 1.2);
+        ctx.strokeStyle = n.center ? fgColor : borderColor; ctx.stroke();
+        ctx.font = (n.center || hover === n ? '600 ' : '') + '11px Inter, sans-serif';
+        ctx.fillStyle = fgColor; ctx.textAlign = 'center';
+        var label = n.title.length > 30 ? n.title.slice(0, 29) + '…' : n.title;
+        ctx.fillText(label, x, y + n.r + 14);
+      });
+    }
+    (function loop() { step(); draw(); requestAnimationFrame(loop); })();
+    function pick(ev) {
+      var rect = canvas.getBoundingClientRect();
+      var mx = (ev.clientX - rect.left) / rect.width, my = (ev.clientY - rect.top) / rect.height;
+      var best = null, bd = 1e9;
+      ns.forEach(function (n) {
+        var d = Math.sqrt((n.x - mx) * (n.x - mx) + (n.y - my) * (n.y - my));
+        if (d < (n.r + 6) / rect.width && d < bd) { bd = d; best = n; }
+      });
+      return best;
+    }
+    canvas.addEventListener('pointermove', function (ev) { hover = pick(ev); canvas.style.cursor = hover && !hover.center ? 'pointer' : 'default'; });
+    canvas.addEventListener('click', function (ev) { var n = pick(ev); if (n && !n.center) location.href = n.url; });
+    canvas.addEventListener('pointerleave', function () { hover = null; });
+  }).catch(function () {});
+})();
