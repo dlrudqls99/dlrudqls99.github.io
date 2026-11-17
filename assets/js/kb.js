@@ -179,3 +179,46 @@
   document.addEventListener('click', function () { clearTimeout(timer); hide(); });
   window.addEventListener('scroll', hide, { passive: true });
 })();
+
+/* Random note + keyboard navigation (g then h/a/g/d/r) */
+(function () {
+  var script = document.querySelector('script[src$="kb.js"]');
+  if (!script) return;
+  var base = script.getAttribute('src').replace(/assets\/js\/kb\.js$/, '');
+  var index = null;
+  function loadIndex(cb) {
+    if (index) return cb(index);
+    fetch(base + 'search.json').then(function (r) { return r.json(); }).then(function (d) { index = d; cb(d); }).catch(function () {});
+  }
+  function goRandom() {
+    loadIndex(function (d) {
+      var pool = d.filter(function (p) { return p.url !== location.pathname; });
+      if (!pool.length) pool = d;
+      var p = pool[Math.floor(Math.random() * pool.length)];
+      if (p) location.href = p.url;
+    });
+  }
+  document.addEventListener('click', function (e) {
+    var el = e.target && e.target.closest ? e.target.closest('[data-random-note]') : null;
+    if (el) { e.preventDefault(); goRandom(); }
+  });
+  var seq = '', timer = null;
+  document.addEventListener('keydown', function (e) {
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
+    var tag = (document.activeElement && document.activeElement.tagName) || '';
+    if (/INPUT|TEXTAREA|SELECT/.test(tag)) return;
+    if (document.querySelector('dialog[open]')) return;
+    if (e.key.length !== 1) return;
+    var k = e.key.toLowerCase();
+    if (seq === 'g') {
+      clearTimeout(timer); seq = '';
+      if (k === 'h') location.href = base;
+      else if (k === 'a') location.href = base + 'posts/';
+      else if (k === 'g') location.href = base + 'graph/';
+      else if (k === 'd') location.href = base + 'garden/';
+      else if (k === 'r') goRandom();
+      return;
+    }
+    if (k === 'g') { seq = 'g'; timer = setTimeout(function () { seq = ''; }, 600); }
+  });
+})();

@@ -16,6 +16,8 @@ permalink: /garden/
     {% capture g %}{% include growth.html post=p raw=true %}{% endcapture %}
     {% if g == 'evergreen' %}{% assign n_ever = n_ever | plus: 1 %}{% elsif g == 'growing' %}{% assign n_grow = n_grow | plus: 1 %}{% else %}{% assign n_seed = n_seed | plus: 1 %}{% endif %}
   {% endfor %}
+  <p><button class="random-btn" type="button" data-random-note>🎲 랜덤 노트 다시 읽기</button></p>
+
   {% assign total = site.posts.size %}
   {% assign pc_seed = n_seed | times: 100.0 | divided_by: total %}
   {% assign pc_grow = n_grow | times: 100.0 | divided_by: total %}
