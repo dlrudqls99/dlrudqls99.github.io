@@ -3,7 +3,7 @@ layout: post
 title: "Harness Engineering: Building AI Working Environments That Deliver"
 date: 2026-07-02
 categories: [AI, Engineering, Best-Practices]
-tags: [harness-engineering, ai-agents, context-management, prompt-engineering, workflow-design]
+tags: [ai-agents, harness-engineering, prompt-engineering, context-management]
 ---
 
 Sometimes I use the same model with almost the same prompt and get a much worse result than the day before. My first instinct was to blame the model. This lecture argues the problem is usually somewhere else: the environment the AI is working in.

@@ -5,8 +5,8 @@ date: 2025-11-25
 categories:
   - Knowledge Base
 tags:
-  - AI Engineering
-  - Prompt Engineering
+  - prompt-engineering
+  - llm
 ---
 
 

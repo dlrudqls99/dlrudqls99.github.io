@@ -3,7 +3,7 @@ layout: post
 title: "How LLM Tool Calling Works: Building a Simple Agent Loop"
 date: 2026-11-14
 categories: [AI, Agents]
-tags: [llm, tool-calling, agents, python, study-notes]
+tags: [llm, tool-calling, ai-agents, python]
 ---
 
 Tool calling confused me at first because the name sounds like the model runs code. It doesn't. The model only writes a request: "call this tool with these arguments." My code is the one that runs it, and my code can also say no.

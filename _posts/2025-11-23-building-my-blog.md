@@ -5,8 +5,9 @@ date: 2025-11-23
 categories:
   - Tutorial
 tags:
-  - GitHub Pages
-  - Jekyll
+  - github-pages
+  - jekyll
+  - blogging
 ---
 
 I wanted one place to keep my study notes, somewhere I could come back to later. A blog on **GitHub Pages** with **Jekyll** made sense to me: it is free, posts are just Markdown files, and I already use GitHub every day.

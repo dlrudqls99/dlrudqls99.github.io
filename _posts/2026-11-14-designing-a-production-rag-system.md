@@ -3,7 +3,7 @@ layout: post
 title: "Designing a Production RAG System"
 date: 2026-11-14
 categories: [AI, System Design]
-tags: [rag, system-design, llm, search, study-notes]
+tags: [rag, llm, system-design, search]
 ---
 
 I build RAG systems at work, and RAG is also the topic I get asked about most when I study system design. So I wrote down how I would design one for a real company.

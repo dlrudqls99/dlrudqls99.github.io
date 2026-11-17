@@ -3,7 +3,7 @@ layout: post
 title: "AI-Ready Codebase Design and Token Cost Optimization"
 date: 2026-07-02
 categories: [AI, Engineering, Cost-Optimization]
-tags: [ai-agents, token-optimization, codebase-design, cost-management, cache-strategy]
+tags: [ai-agents, token-optimization, codebase-design]
 ---
 
 My mental model of AI coding agents used to be simple: the agent reads some code, writes some code, done. This lecture broke that model. Most of the cost, and most of the failures, happen before any code is written, while the agent is just trying to find its way around.

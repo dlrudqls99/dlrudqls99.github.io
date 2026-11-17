@@ -3,7 +3,7 @@ layout: post
 title: "Hash Tables in Practice: Collisions, Load Factor, and the LRU Cache"
 date: 2026-11-17
 categories: [Programming, Fundamentals]
-tags: [hash-table, data-structures, python, caching, study-notes]
+tags: [python, data-structures, caching]
 ---
 
 I started reviewing CS basics again, one topic a day. Day 1 is hash tables.

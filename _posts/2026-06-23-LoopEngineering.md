@@ -3,7 +3,7 @@ layout: post
 title: "Understanding Loop Engineering in AI"
 date: 2026-06-23
 categories: [AI, Engineering, Automation]
-tags: [loop-engineering, ai-agents, autonomous-systems, prompt-engineering]
+tags: [ai-agents, loop-engineering, prompt-engineering]
 ---
 
 I keep seeing the words "loop engineering" lately. First there was prompt engineering, then context engineering, then harness engineering, and now loops. I wanted to know what is actually new here, so I watched this video by a developer from Anthropic and took notes.

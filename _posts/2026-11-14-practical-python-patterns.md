@@ -3,7 +3,7 @@ layout: post
 title: "Practical Python Patterns I Keep Reusing"
 date: 2026-11-14
 categories: [Programming, Python]
-tags: [python, algorithms, patterns, study-notes]
+tags: [python, algorithms]
 ---
 
 When I practice problem solving, I keep coming back to the same handful of patterns. Then I noticed the same patterns show up in my real work too — rate limiters, stream parsers, schedulers. So I wrote them down in one place, each with the smallest example that shows the idea.
