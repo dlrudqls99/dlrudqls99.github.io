@@ -1,6 +1,7 @@
 /* Knowledge-base theme: Ecru Navy (dark, default) / Ecru Paper (light)
    Palette: Inoue Brothers Brushed Scole Stripe — ecru × navy, plus ink black.
-   Core colors: ecru #E9E2D0 · navy #1B2A4A · ash blue #8CA6C9 · ink #0B0E13 */
+   Core colors: ecru #E8E1CF · navy #1D2D50 · ash blue #9FB8DC · ink #0B0F16.
+   Dark = the navy stripe (navy ground, ecru text). Light = the ecru base (ecru ground, navy ink). */
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css');
@@ -16,46 +17,46 @@
 
 [data-theme="dark"] {
   color-scheme: dark;
-  --bg: #0b0e13;
-  --bg-side: #10151f;
-  --bg-code: #07090d;
-  --bg-hover: #1a2233;
-  --bg-active: #24304a;
-  --fg: #e9e2d0;
-  --fg-muted: #aeb6c4;
-  --fg-faint: #7e8798;
-  --border: #232c40;
-  --accent: #8ca6c9;
-  --accent-2: #d8cfb8;
-  --green: #9dc3a5;
-  --pink: #d08ca3;
-  --orange: #d9a05b;
-  --yellow: #e3d9b8;
-  --red: #de6b5e;
-  --mark: rgba(140, 166, 201, .30);
-  --shadow: 0 16px 48px rgba(0, 0, 0, .6);
+  --bg: #131e33;
+  --bg-side: #0f1828;
+  --bg-code: #0b0f16;
+  --bg-hover: #1d2c47;
+  --bg-active: #27395c;
+  --fg: #e8e1cf;
+  --fg-muted: #b4bcd0;
+  --fg-faint: #7f8ca3;
+  --border: #263453;
+  --accent: #9fb8dc;
+  --accent-2: #d9cfb4;
+  --green: #a8c3a0;
+  --pink: #9fb8dc;
+  --orange: #c99b62;
+  --yellow: #d9cf9f;
+  --red: #d97a6c;
+  --mark: rgba(159, 184, 220, .32);
+  --shadow: 0 16px 48px rgba(4, 8, 16, .65);
 }
 
 [data-theme="light"] {
   color-scheme: light;
-  --bg: #f5f1e8;
-  --bg-side: #ede7d8;
-  --bg-code: #efe9db;
-  --bg-hover: #e7dfce;
-  --bg-active: #dcd2ba;
-  --fg: #131926;
-  --fg-muted: #4a5468;
-  --fg-faint: #7c8698;
-  --border: #ddd3be;
-  --accent: #1b2a4a;
-  --accent-2: #5b7ba5;
-  --green: #3e7a4e;
-  --pink: #b04a6b;
-  --orange: #b26a1b;
-  --yellow: #8a6d1f;
+  --bg: #eae3d1;
+  --bg-side: #e1d8c2;
+  --bg-code: #f2ecdd;
+  --bg-hover: #dcd2b8;
+  --bg-active: #cfc2a2;
+  --fg: #131a29;
+  --fg-muted: #46536b;
+  --fg-faint: #79839a;
+  --border: #cfc3a6;
+  --accent: #1d2d50;
+  --accent-2: #4e6a94;
+  --green: #4a7247;
+  --pink: #1d2d50;
+  --orange: #a05c17;
+  --yellow: #7a6420;
   --red: #b3382e;
-  --mark: #ebdfb4;
-  --shadow: 0 16px 48px rgba(19, 25, 38, .16);
+  --mark: #ead9a0;
+  --shadow: 0 16px 48px rgba(19, 26, 41, .18);
 }
 
 /* ---------- base ---------- */
