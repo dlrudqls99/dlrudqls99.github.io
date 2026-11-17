@@ -10,50 +10,52 @@ tags:
 ---
 
 
-I recently spent some time with a whitepaper on Prompt Engineering by Lee Boonstra from Google, and I wanted to share my takeaways. What I loved about this read is that it reinforces the idea that you don't need to be a data scientist to write a prompt—everyone can do it. However, crafting *effective* prompts is an iterative process that requires understanding how the model actually predicts the next token.
+I read Google's prompt engineering whitepaper by Lee Boonstra and wrote down the parts I wanted to remember.
 
-Here is my review of the core concepts and techniques that stood out to me.
+One thing I liked right away: you don't need to be a data scientist to write a prompt. Anyone can do it. But writing a prompt that actually works takes testing, because everything depends on how the model predicts the next token.
+
+These are the parts that stood out to me.
 
 ## It’s All About the Configuration
-One of the first things that struck me was that prompting isn't just about the words you type; it's about the "knobs" you turn on the model configuration.
+The first thing that surprised me: prompting is not just about the words you type. It is also about the "knobs" in the model configuration.
 
-* **The "Creativity" Knobs:** I learned that **Temperature** controls the randomness. Lower temperatures are great for deterministic, factual answers, while higher temperatures yield diverse, unexpected results.
-* **Sampling Controls:** The paper dives into **Top-K** and **Top-P**. Top-K limits the model to the top *K* most likely tokens, while Top-P selects tokens based on cumulative probability.
-* **The "Goldilocks" Setting:** The author suggests a solid starting point for coherent but creative results: Temperature 0.2, Top-P 0.95, and Top-K 30. If you want just facts (like math), set Temperature to 0.
+* **The "Creativity" Knobs:** **Temperature** controls randomness. Low temperature gives steady, factual answers. High temperature gives more varied and unexpected ones.
+* **Sampling Controls:** **Top-K** and **Top-P** decide which tokens the model can pick from. Top-K keeps only the top *K* most likely tokens. Top-P keeps tokens until their combined probability reaches P.
+* **The "Goldilocks" Setting:** The paper suggests a starting point that is coherent but still a bit creative: Temperature 0.2, Top-P 0.95, and Top-K 30. If you want just facts, like math, set Temperature to 0.
 
 ## Moving Beyond Basic Prompts
-The paper does a great job explaining the progression from simple to complex prompting.
+The paper then moves from simple prompts to more complex ones.
 
 ### 1. The "Shot" Methodology
-We start with **Zero-shot**, which is basically just asking the model to do something without examples (e.g., "Classify this movie review"). But when that fails, **Few-shot** prompting is the way to go. By providing 3 to 5 examples, we can force the model to follow a specific pattern.
+**Zero-shot** is just asking the model to do something without examples, like "Classify this movie review." When that is not enough, **Few-shot** usually works better: give 3 to 5 examples and the model follows the pattern.
 
 ### 2. Role & Context
-I found the distinction between **System**, **Contextual**, and **Role** prompting really helpful.
-* **System prompts** define the "big picture" or the model's capability.
-* **Role prompting** gives the model a persona (like a "travel guide" or "cynical editor") to influence style and tone.
-* **Contextual prompts** provide the immediate background info needed for the specific task.
+The difference between **System**, **Contextual**, and **Role** prompting confused me at first, but it is simple once you see it:
+* **System prompts** set the big picture: what the model is for and what it can do.
+* **Role prompting** gives the model a persona, like a "travel guide" or a "cynical editor," which changes the style and tone.
+* **Contextual prompts** give the background info needed for this one specific task.
 
 ## The Advanced Stuff: Making the AI "Think"
-This was the most fascinating part of the document. We can actually trick LLMs into reasoning better.
+This was the part I enjoyed most. There are ways to make the model reason better instead of just answering quickly.
 
-* **Step-Back Prompting:** This technique asks the model to answer a general question about a topic *before* diving into the specific task. It grounds the model in background knowledge first.
-* **Chain of Thought (CoT):** LLMs struggle with math and logic. CoT forces the model to generate intermediate reasoning steps (literally asking it to "think step by step"), which significantly improves accuracy.
-* **Tree of Thoughts (ToT):** This visualizes reasoning as a tree where the model explores multiple paths simultaneously rather than a linear line.
-* **ReAct:** This stands for "Reason and Act." It allows the model to reason about a problem and then take actions—like using external tools or search—to solve it.
+* **Step-Back Prompting:** Ask a general question about the topic *first*, then do the specific task. The model answers the specific part better when the background is already there.
+* **Chain of Thought (CoT):** Models are bad at jumping straight to an answer for math and logic. CoT makes the model write the steps in between — literally "think step by step" — and accuracy goes up a lot.
+* **Tree of Thoughts (ToT):** Instead of one straight line of reasoning, the model explores several paths at once, like a tree.
+* **ReAct:** Short for "Reason and Act." The model reasons about a problem, then takes an action — using a tool or a search — then reasons again with the result.
 
 ## Coding and Automation
-The guide also covers how Gemini can act as a developer. It can write, explain, translate, and even debug code. There is even a concept called **Automatic Prompt Engineering (APE)**, where you ask the model to generate its own prompt variants and evaluate them to find the best one.
+The paper also covers Gemini as a coding helper. It can write code, explain it, translate it to another language, and debug it. There is also **Automatic Prompt Engineering (APE)**, where the model writes its own prompt variants and tests them to find the best one. A model improving its own prompts felt a bit strange to me, but it works.
 
 ## My Favorite Best Practices
-If you take anything away from this review, let it be these tips from the "Best Practices" section:
+These tips from the "Best Practices" section are the ones I actually use:
 
-1.  **Be Positive:** Use instructions (what *to* do) over constraints (what *not* to do). Humans and AI both prefer positive reinforcement.
-2.  **Use JSON:** For extracting data, asking for JSON output helps limit hallucinations and forces structure.
-3.  **Document Your Work:** This is crucial. Prompt engineering is scientific. You should track your prompts, settings (temperature, etc.), and results in a spreadsheet to monitor what works.
-4.  **JSON Repair:** If your output gets cut off (truncated), libraries like `json-repair` can save the day by fixing the broken syntax.
+1.  **Be Positive:** Tell the model what *to* do instead of only what *not* to do. Instructions work better than a list of bans.
+2.  **Use JSON:** When you extract data, asking for JSON output forces structure and limits made-up answers.
+3.  **Document Your Work:** This one matters most to me. Track your prompts, settings (temperature, etc.), and results in a spreadsheet. Otherwise you never know which change actually helped.
+4.  **JSON Repair:** If the output gets cut off in the middle, a library like `json-repair` can fix the broken JSON instead of throwing it away.
 
 ## Final Thoughts
-The biggest takeaway for me is that prompt engineering is an **iterative process**. You have to tinker, test, and refine. Whether you are using simple zero-shot prompts or complex reasoning chains like ReAct, the goal is always to guide the prediction engine to the right sequence of tokens.
+My biggest takeaway is that prompt engineering is an **iterative process**. You try something, look at the output, fix the prompt, and try again. It does not matter much whether the prompt is a simple zero-shot or a long reasoning chain like ReAct. What matters is the loop of testing and refining.
 
 ## References
 - Boonstra, L. (Google). *Prompt Engineering Whitepaper*. [Available on Google Drive](https://drive.google.com/file/d/1AbaBYbEa_EbPelsT40-vj64L-2IwUJHy/view?pli=1)

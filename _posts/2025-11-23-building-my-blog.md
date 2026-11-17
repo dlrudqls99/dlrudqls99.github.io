@@ -9,13 +9,13 @@ tags:
   - Jekyll
 ---
 
-Building a personal blog is a great way to share knowledge and build your online presence. In this guide, I'll walk you through the entire process of creating a blog using **GitHub Pages** and **Jekyll**, starting from absolutely nothing.
+I wanted one place to keep my study notes, somewhere I could come back to later. A blog on **GitHub Pages** with **Jekyll** made sense to me: it is free, posts are just Markdown files, and I already use GitHub every day.
 
-We'll be using the [Minimal Mistakes](https://mmistakes.github.io/minimal-mistakes/) theme, which is a popular, clean, and responsive theme for Jekyll.
+These are the steps I followed to set mine up from nothing. The theme is [Minimal Mistakes](https://mmistakes.github.io/minimal-mistakes/), a clean theme that also works well on mobile.
 
 ## Prerequisites
 
-Before we begin, make sure you have:
+You need three things first:
 1. A [GitHub account](https://github.com/).
 2. [Git](https://git-scm.com/) installed on your computer.
 3. A basic understanding of using the terminal.
@@ -44,7 +44,7 @@ cd username.github.io
 
 ## Step 3: Install Jekyll and Dependencies
 
-We need to set up a `Gemfile` to manage our Ruby dependencies.
+Jekyll is a Ruby tool, so the dependencies go in a `Gemfile`.
 
 1. Create a file named `Gemfile` in the root of your repository with the following content:
 
@@ -67,9 +67,9 @@ We need to set up a `Gemfile` to manage our Ruby dependencies.
 
 ## Step 4: Configure the Blog
 
-Create a `_config.yml` file in the root directory. This is the heart of your blog's configuration.
+The `_config.yml` file in the root directory holds all the blog's settings.
 
-Here is a basic configuration to get you started with the Minimal Mistakes theme:
+This is the basic configuration I started with, using the Minimal Mistakes theme:
 
 ```yaml
 title: "My Awesome Blog"
@@ -108,9 +108,7 @@ Jekyll looks for blog posts in a `_posts` directory.
 
 ## Step 6: Run Locally
 
-Now, let's see your blog in action!
-
-Run the following command:
+At this point I run it locally, to catch problems before pushing anything:
 
 ```bash
 bundle exec jekyll serve
@@ -121,7 +119,7 @@ bundle exec jekyll serve
 > arch -x86_64 bundle exec jekyll serve
 > ```
 
-Open your browser and go to `http://127.0.0.1:4000`. You should see your new blog running locally!
+Open `http://127.0.0.1:4000` in your browser. If the blog shows up there, the setup works.
 
 ## Step 7: Adding an About Page
 
@@ -141,7 +139,7 @@ Open your browser and go to `http://127.0.0.1:4000`. You should see your new blo
 
 ## Step 8: Deploy to GitHub
 
-Once you are happy with your changes, it's time to go live.
+When it looks right locally, push it and the blog goes live.
 
 ```bash
 git add .
@@ -149,7 +147,7 @@ git commit -m "Initial blog setup"
 git push origin main
 ```
 
-Wait a minute or two, then visit `https://username.github.io`. Your blog is now live for the world to see!
+Wait a minute or two, then visit `https://username.github.io`. The blog is live.
 
 ---
 
@@ -157,3 +155,7 @@ Wait a minute or two, then visit `https://username.github.io`. Your blog is now 
 
 - **404 Error**: Make sure your repository is named exactly `username.github.io`.
 - **Ruby Errors**: Ensure you have a compatible Ruby version installed. Using `rbenv` or `rvm` is recommended.
+
+## Looking Back
+
+The setup took me longer than writing my first post. Most of my problems were Ruby version issues, not Jekyll issues. But once it runs, publishing is just writing a Markdown file and pushing it, which is exactly what I wanted.
