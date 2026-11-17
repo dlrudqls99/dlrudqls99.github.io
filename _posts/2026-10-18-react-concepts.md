@@ -4,7 +4,6 @@ title: "My Notes on \"Every React Concept Explained in 12 Minutes\""
 date: 2026-10-18
 categories: [Frontend, React]
 tags: [react, javascript, hooks, study-notes]
-growth: evergreen
 ---
 I've been studying React so I can start building my own apps. I kept running into words like "reconciliation" or "hydration" and nodding along without really getting them. Then I found this video from Coding2GO, and it helped a lot.
 
