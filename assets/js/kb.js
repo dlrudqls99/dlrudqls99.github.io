@@ -240,7 +240,7 @@
   var countEl = document.querySelector('[data-views-count]');
   if (!countEl) return;
   fetch('https://dlrudqls99.goatcounter.com/counter' + location.pathname + '.json')
-    .then(function (r) { if (!r.ok) throw new Error('off'); return r.json(); })
+    .then(function (r) { return r.json(); })
     .then(function (d) {
       if (!d || d.count == null) return;
       countEl.textContent = d.count;
