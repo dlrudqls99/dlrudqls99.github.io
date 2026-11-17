@@ -30,7 +30,6 @@ title: "About"
     <li><strong>Garden</strong>: notes mature over time — 🌱 Seedling, 🌿 Growing, 🌳 Evergreen — judged automatically by length and age. The <a href="{{ '/garden/' | relative_url }}">Garden page</a> shows the whole picture.</li>
     <li><strong>Graph</strong>: the <a href="{{ '/graph/' | relative_url }}">graph view</a> draws notes as nodes and shared tags as edges. Each note also has a small local graph at the bottom.</li>
     <li><strong>Hover previews</strong>: hover any note link to peek at it, Obsidian-style.</li>
-    <li><strong>Random</strong>: the sidebar's 🎲 link (or <kbd>g</kbd> then <kbd>r</kbd>) reopens a random old note.</li>
     <li><strong>Keyboard</strong>: <kbd>g</kbd> then <kbd>h</kbd> home, <kbd>a</kbd> all notes, <kbd>g</kbd> graph, <kbd>d</kbd> garden.</li>
     <li><strong>Callouts</strong>: in Markdown, start a blockquote with <code>[!NOTE]</code>, <code>[!TIP]</code>, <code>[!WARNING]</code>, <code>[!IMPORTANT]</code>, <code>[!EXAMPLE]</code>, <code>[!QUESTION]</code>, <code>[!SUCCESS]</code>, <code>[!DANGER]</code>, <code>[!INFO]</code> or <code>[!QUOTE]</code> — optionally followed by a title — and it renders as a styled callout box.</li>
   </ul>

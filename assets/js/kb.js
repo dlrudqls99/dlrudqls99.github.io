@@ -180,28 +180,11 @@
   window.addEventListener('scroll', hide, { passive: true });
 })();
 
-/* Random note + keyboard navigation (g then h/a/g/d/r) */
+/* Keyboard navigation (g then h/a/g/d) */
 (function () {
   var script = document.querySelector('script[src$="kb.js"]');
   if (!script) return;
   var base = script.getAttribute('src').replace(/assets\/js\/kb\.js$/, '');
-  var index = null;
-  function loadIndex(cb) {
-    if (index) return cb(index);
-    fetch(base + 'search.json').then(function (r) { return r.json(); }).then(function (d) { index = d; cb(d); }).catch(function () {});
-  }
-  function goRandom() {
-    loadIndex(function (d) {
-      var pool = d.filter(function (p) { return p.url !== location.pathname; });
-      if (!pool.length) pool = d;
-      var p = pool[Math.floor(Math.random() * pool.length)];
-      if (p) location.href = p.url;
-    });
-  }
-  document.addEventListener('click', function (e) {
-    var el = e.target && e.target.closest ? e.target.closest('[data-random-note]') : null;
-    if (el) { e.preventDefault(); goRandom(); }
-  });
   var seq = '', timer = null;
   document.addEventListener('keydown', function (e) {
     if (e.ctrlKey || e.metaKey || e.altKey) return;
@@ -216,7 +199,6 @@
       else if (k === 'a') location.href = base + 'posts/';
       else if (k === 'g') location.href = base + 'graph/';
       else if (k === 'd') location.href = base + 'garden/';
-      else if (k === 'r') goRandom();
       return;
     }
     if (k === 'g') { seq = 'g'; timer = setTimeout(function () { seq = ''; }, 600); }
