@@ -1,0 +1,9 @@
+{%- assign g = include.post.growth | default: '' | strip -%}
+{%- if g == '' -%}
+  {%- assign w = include.post.content | strip_html | number_of_words -%}
+  {%- if w >= 2500 -%}{%- assign g = 'growing' -%}{%- else -%}{%- assign g = 'seedling' -%}{%- endif -%}
+{%- endif -%}
+{%- if g == 'evergreen' -%}{%- assign gemoji = '🌳' -%}{%- assign glabel = 'Evergreen' -%}
+{%- elsif g == 'growing' -%}{%- assign gemoji = '🌿' -%}{%- assign glabel = 'Growing' -%}
+{%- else -%}{%- assign gemoji = '🌱' -%}{%- assign glabel = 'Seedling' -%}{%- endif -%}
+{%- if include.compact -%}<span class="growth-emoji" title="{{ glabel }}">{{ gemoji }}</span>{%- else -%}<span class="growth-badge growth-{{ g }}">{{ gemoji }} {{ glabel }}</span>{%- endif -%}

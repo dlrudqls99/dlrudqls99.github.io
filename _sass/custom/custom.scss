@@ -360,3 +360,47 @@ pre .copy:hover { color: var(--fg); }
   .pager { grid-template-columns: 1fr; }
   .note-list .muted { display: none; }
 }
+
+/* Growth (note maturity) + Garden dashboard */
+.growth-badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 11px; font-weight: 600; color: var(--fg-muted);
+  background: var(--bg-code); border: 1px solid var(--border);
+  border-radius: 999px; padding: 1px 8px; white-space: nowrap;
+}
+.growth-emoji { font-size: 11px; margin-left: 6px; }
+.garden-stats {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(118px, 1fr));
+  gap: 10px; margin: 18px 0 6px;
+}
+.gstat {
+  display: flex; flex-direction: column; gap: 2px;
+  background: var(--bg-side); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 12px 14px;
+}
+.gstat-num { font-size: 20px; font-weight: 700; letter-spacing: -.02em; }
+.gstat-label { font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--fg-faint); }
+.garden h2 { margin-top: 30px; }
+.stage-bar {
+  display: flex; height: 10px; border-radius: 999px; overflow: hidden;
+  background: var(--bg-hover); margin: 12px 0 8px;
+}
+.stage-bar .seg-seed { background: var(--green); }
+.stage-bar .seg-grow { background: var(--accent-2); }
+.stage-bar .seg-ever { background: var(--accent); }
+.stage-legend {
+  display: flex; flex-wrap: wrap; gap: 6px 16px;
+  list-style: none; margin: 0; padding: 0;
+  font-size: 12.5px; color: var(--fg-muted);
+}
+.heatmap { display: flex; gap: 3px; overflow-x: auto; padding: 6px 0 4px; }
+.hm-col { display: flex; flex-direction: column; gap: 3px; }
+.hm-cell { width: 10px; height: 10px; border-radius: 2px; background: var(--bg-hover); flex: none; }
+.hm-cell.lvl1 { background: color-mix(in srgb, var(--accent) 40%, transparent); }
+.hm-cell.lvl2 { background: color-mix(in srgb, var(--accent) 70%, transparent); }
+.hm-cell.lvl3 { background: var(--accent); }
+.hm-cell.hm-future { visibility: hidden; }
+.heatmap-legend {
+  display: flex; align-items: center; gap: 4px;
+  font-size: 11.5px; color: var(--fg-faint); margin-top: 4px;
+}
