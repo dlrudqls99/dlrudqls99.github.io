@@ -6,26 +6,28 @@ categories: [Programming, Fundamentals]
 tags: [hash-table, data-structures, python, caching, study-notes]
 ---
 
-I'm starting a slow review of CS fundamentals, one topic a day, and day one is the data structure I probably use more than any other without thinking about it: the hash table. Caches, deduplication, session stores, database indexes — underneath all of them is the same idea. These are my notes on how it actually works, and where the "average O(1)" claim comes from.
+I started reviewing CS basics again, one topic a day. Day 1 is hash tables.
+
+I use dicts every single day, but when I tried to explain *why* they are fast, my answer was just "because lookup is O(1)." That felt weak, so I went back to the basics. These are my notes.
 
 ## 1. The basic idea
 
-A hash table stores key–value pairs in an array of *buckets*. To place a key, you run it through a **hash function** that returns a number, take that number modulo the array size, and use the result as the index.
+A hash table stores key–value pairs in an array of *buckets*. To place a key, you run it through a **hash function**, get a number, and take that number modulo the array size. The result is the index.
 
 ```python
 index = hash(key) % len(buckets)
 ```
 
-If the hash function spreads keys evenly, each bucket holds very few entries, and lookup is just: hash, jump to the bucket, check one or two items. That is the whole trick — trade a small amount of computation (the hash) for avoiding a search.
+If the hash function spreads keys out evenly, each bucket has only one or two entries. Lookup is then simple: hash the key, jump to the bucket, check a couple of items. You pay a small cost (computing the hash) to skip searching through everything.
 
 ## 2. Collisions are normal
 
-Two different keys will sometimes hash to the same bucket. This is not an edge case; with enough keys it is guaranteed. There are two classic ways to handle it:
+Two different keys sometimes land in the same bucket. This is not a rare edge case. With enough keys, it always happens. There are two classic ways to handle it:
 
-- **Chaining** — each bucket holds a small list of entries. Lookup scans that short list.
-- **Open addressing** — if the bucket is taken, probe the next slots (linear probing is the simplest version) until you find the key or an empty slot.
+- **Chaining** — each bucket holds a small list of entries, and lookup scans that short list.
+- **Open addressing** — if the bucket is taken, check the next slots until you find the key or an empty slot. Linear probing is the simplest version.
 
-A minimal chaining implementation:
+A tiny chaining implementation:
 
 ```python
 class HashMap:
@@ -50,31 +52,31 @@ class HashMap:
         return default
 ```
 
-The failure mode is worth remembering: if the hash function is bad — or an attacker deliberately crafts colliding keys — every entry lands in one bucket and the table degrades to a linked list with O(n) lookups. This is a real attack (hash flooding), and it is why Python randomizes string hashing per process (SipHash with a random seed).
+The bad case is worth remembering. If the hash function is poor — or an attacker makes many keys collide on purpose — everything ends up in one bucket and the table becomes a slow linked list with O(n) lookups. This attack is real (it's called hash flooding), and it is why Python randomizes the hash of strings for each process.
 
 ## 3. Load factor and rehashing
 
-The **load factor** is `entries / buckets`. As it grows, buckets get crowded and collisions multiply. Implementations pick a threshold — 0.75 is a common one — and when the table crosses it, they allocate a bigger array and **rehash** every key into it.
+The **load factor** is `entries / buckets`. As the table fills up, buckets get crowded and collisions grow. So implementations set a limit — 0.75 is common — and when the table passes it, they make a bigger array and **rehash** every key into the new one.
 
-Rehashing is O(n), which sounds like it breaks the O(1) promise. It doesn't, because of amortization: if you double the array each time, the expensive resize happens rarely, and spreading its cost over all the inserts that caused it leaves each insert at average O(1). "Average-case O(1)" really means "O(1) as long as the hash is decent and the load factor stays bounded."
+Rehashing costs O(n), which sounds like it breaks the O(1) story. It doesn't, because of how rarely it happens. If the array doubles each time, the expensive resize is spread over all the inserts that came before it. So each insert is O(1) *on average*. That is the honest version of the claim: average O(1), if the hash is decent and the load factor stays under control.
 
-## 4. Python dicts specifically
+## 4. Python dicts, specifically
 
-A few facts about the implementation I use every day:
+Things I checked about the dict I use every day:
 
-- `dict` uses open addressing with a compact, insertion-ordered layout (order preservation is a language guarantee since Python 3.7).
-- Keys must be hashable — which is why lists can't be dict keys but tuples can.
-- String and bytes hashes are randomized per process, so iteration order and collision patterns differ between runs. Never depend on a specific hash value.
+- `dict` uses open addressing, and since Python 3.7 it also remembers insertion order — that is a language guarantee, not luck.
+- Keys must be hashable. That is why lists can't be dict keys but tuples can.
+- String hashes are randomized per process, so never depend on a specific hash value.
 
 ## 5. Where I actually use this
 
-- **Deduplication** — when indexing documents for a RAG pipeline, a set of content hashes drops duplicates before embedding. A hash table doing quiet janitor work.
-- **Response caching** — keying an LLM response cache by a hash of the normalized prompt. The cache *policy* (what to evict) is separate from the table itself, which leads to the exercise below.
-- **Counting and grouping** — `Counter` and `defaultdict` are just dicts with a policy attached.
+- **Deduplication.** When I index documents for a RAG pipeline, I keep a set of content hashes and drop duplicates before embedding them. A hash table doing quiet cleanup work.
+- **Caching.** An LLM response cache keys answers by a hash of the normalized prompt. The table gives fast lookup; the eviction policy is a separate problem (see the exercise below).
+- **Counting and grouping.** `Counter` and `defaultdict` are just dicts with a small policy on top.
 
 ## 6. Exercise: an LRU cache
 
-The standard interview-flavoured exercise, and a genuinely useful pattern: a cache with a fixed capacity that evicts the **least recently used** entry. `OrderedDict` gives O(1) move-to-end and pop-from-front, so both operations stay O(1):
+This is the classic exercise, and it is also a pattern I really use: a cache with fixed size that removes the **least recently used** entry first. `OrderedDict` can move an entry to the end and pop from the front, both in O(1), so `get` and `put` stay O(1):
 
 ```python
 from collections import OrderedDict
@@ -98,13 +100,13 @@ class LRUCache:
             self.cache.popitem(last=False)  # evict least recently used
 ```
 
-The design point: the hash table gives O(1) access, and the ordering gives O(1) eviction. Most real caches (and the classic interview follow-ups — add a TTL, make it thread-safe) are variations on this pairing.
+The point I wrote down for myself: the hash table gives O(1) access, and the ordering gives O(1) eviction. Most real caches are this pair, plus extras — a TTL, a lock for threads, and so on.
 
 ## Questions I should be able to answer
 
-- What happens when collisions pile up, and how does that change the complexity?
-- Why is lookup "average O(1)" rather than just O(1)?
+- What happens when collisions pile up, and how does the complexity change?
+- Why do we say "average O(1)" instead of just O(1)?
 - What triggers a resize, and why doesn't rehashing ruin the average?
-- Why can an attacker hurt a hash table, and what do languages do about it?
+- How can an attacker hurt a hash table, and what do languages do about it?
 
-If I can answer those without hand-waving, the fundamentals are actually back.
+If I can answer these without waving my hands, day 1 did its job.

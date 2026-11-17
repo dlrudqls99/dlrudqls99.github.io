@@ -6,7 +6,9 @@ categories: [AI, Agents]
 tags: [llm, tool-calling, agents, python, study-notes]
 ---
 
-An LLM on its own can only talk. Tool calling is what lets it *do* things: search the web, run a calculation, query a database. The model never executes anything itself — it asks my code to execute a tool, and my code decides whether to comply. Understanding that loop precisely made a lot of agent frameworks suddenly look simple, so I wrote it down.
+Tool calling confused me at first because the name sounds like the model runs code. It doesn't. The model only writes a request: "call this tool with these arguments." My code is the one that runs it, and my code can also say no.
+
+Once I understood that, agent frameworks stopped looking like magic. Most of them are this one loop with better packaging. These are my notes from building the loop by hand.
 
 ## The loop
 
@@ -19,11 +21,11 @@ An LLM on its own can only talk. Tool calling is what lets it *do* things: searc
    Repeat from 3 until there is a final answer (or a step limit hits).
 ```
 
-That is the whole pattern. Agent frameworks add state, retries, and nicer APIs, but the skeleton is these five steps.
+That is really the whole thing. Frameworks add state, retries, and nicer APIs on top, but the skeleton is these five steps.
 
-## A concrete example: a Wikipedia search tool
+## A simple example: a Wikipedia search tool
 
-Say the user asks a factual question: *"Who was the second person to walk on the moon?"* The model may not know, so I give it one tool:
+Say the user asks: *"Who was the second person to walk on the moon?"* The model might not know, so I give it one tool:
 
 ```python
 tools = [{
@@ -39,7 +41,7 @@ tools = [{
 }]
 ```
 
-The tool itself is ordinary code. Wikipedia has a public API that needs no key:
+The tool itself is just normal code. Wikipedia has a public API that needs no key:
 
 ```python
 import requests
@@ -77,7 +79,7 @@ def wikipedia_search(query: str) -> str:
     return next(iter(pages.values()))["extract"]
 ```
 
-And the loop, in pseudocode that maps onto any provider's API:
+And the loop. This is pseudocode, but it maps onto any provider's API:
 
 ```python
 def ask(question: str, max_steps: int = 5) -> str:
@@ -94,18 +96,18 @@ def ask(question: str, max_steps: int = 5) -> str:
     return "Stopped: too many steps."
 ```
 
-## The parts that actually matter in production
+## The parts that matter in real systems
 
-**Validate before you execute.** The arguments come from a model, which means they are untrusted input. Check the tool name against an allowlist, validate argument types, and treat anything with side effects (sending mail, deleting data, paying) as approval-required, not automatic.
+**Check before you run anything.** The arguments come from a model, so they are untrusted input, same as text from a web form. I check the tool name against a list of allowed tools and validate the argument types. And anything with real side effects — sending mail, deleting data, paying for something — should need a human's approval, not run on its own.
 
-**Cap the loop.** A `max_steps` limit and a timeout are not optional. Models can ping-pong between tools, and an agent that never stops is a billing incident with extra steps.
+**Always cap the loop.** A step limit and a timeout are not optional. Models sometimes bounce between two tools forever, and an agent that never stops just burns money.
 
-**Make tools boring and single-purpose.** "Search Wikipedia and return a summary" works. "Do research" does not. Small tools with clear descriptions get called correctly; vague tools get called creatively.
+**Keep tools small and boring.** "Search Wikipedia and return a summary" works well. "Do research" does not. Small tools with clear descriptions get called correctly. Vague tools get called in creative ways I did not expect.
 
-**Log every step.** Question, tool call, arguments, result, final answer. When an agent misbehaves, the trace is the only way to know whether the model chose badly, the tool returned junk, or my parsing was wrong.
+**Log every step.** The question, the tool call, the arguments, the result, the final answer. When an agent does something wrong, the log is the only way to tell what happened: did the model choose the wrong tool, did the tool return junk, or was my parsing broken?
 
-**Keep a history.** Recording each question and answer costs almost nothing and pays for itself the first time someone asks "what did it tell the user yesterday?" In-memory storage is fine for a study project; the moment it matters, write down what breaks when the process restarts, and move to a real store.
+**Keep a history.** Saving each question and answer costs almost nothing, and it pays off the first time someone asks "what did it tell the user yesterday?" In-memory storage is fine for a study project. But the moment it matters, I write down what breaks when the process restarts — everything in memory is gone — and move to a real database.
 
-## Why this pattern is worth studying
+## What I took away
 
-Strip away the framework logos and most "AI agents" are this loop plus engineering discipline: validation, limits, logging, and tools designed like good APIs. If I can build the loop by hand once, I can evaluate any framework by asking what it adds beyond these five steps — and notice when the answer is "not much."
+Building this loop by hand once was worth more than reading about three frameworks. Now when I look at a framework, I ask what it adds on top of these five steps: validation, limits, logging, well-designed tools. Sometimes the answer is "a lot." Sometimes it is "not much, but with nice docs." Either way, I can tell the difference now.

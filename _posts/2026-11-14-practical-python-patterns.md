@@ -6,13 +6,13 @@ categories: [Programming, Python]
 tags: [python, algorithms, patterns, study-notes]
 ---
 
-I noticed my problem-solving practice kept circling back to the same handful of patterns — and that the same patterns show up in real systems code: rate limiters, stream parsers, schedulers. These are my notes on the ones I use most, each with the smallest example that captures the idea.
+When I practice problem solving, I keep coming back to the same handful of patterns. Then I noticed the same patterns show up in my real work too — rate limiters, stream parsers, schedulers. So I wrote them down in one place, each with the smallest example that shows the idea.
 
 ## 1. Top-K with a heap
 
 **When:** "the k most frequent / largest / most recent" anything.
 
-Counting is a `Counter`; selecting the top k is `heapq.nlargest`, which is O(n log k) instead of sorting everything.
+Counting is a `Counter`. Picking the top k is `heapq.nlargest`, which is O(n log k) instead of sorting the whole thing.
 
 ```python
 from collections import Counter
@@ -25,7 +25,7 @@ def top_k_frequent(items, k):
 
 ## 2. Sliding window
 
-**When:** a condition over a contiguous range — longest substring without repeats, max sum of a fixed-size window, "at most N events in any 60 seconds."
+**When:** a condition over a continuous range — longest substring without repeats, max sum of a fixed-size window, "at most N events in any 60 seconds."
 
 ```python
 def longest_unique(s: str) -> int:
@@ -39,11 +39,11 @@ def longest_unique(s: str) -> int:
     return best
 ```
 
-The window only moves forward, so the whole scan is O(n). The same shape, with timestamps instead of characters, is a sliding-window rate limiter.
+The window only moves forward, so the whole scan is O(n). Change the characters to timestamps and this same shape becomes a sliding-window rate limiter.
 
 ## 3. BFS as a template
 
-**When:** shortest path in an unweighted graph or grid, level-by-level anything.
+**When:** shortest path in an unweighted graph or grid, or anything level by level.
 
 ```python
 from collections import deque
@@ -62,11 +62,11 @@ def bfs(start, graph):
     return order
 ```
 
-Mark nodes as seen when they enter the queue, not when they leave it — that one detail prevents exponential duplicate work.
+One detail I got wrong before: mark nodes as seen when they go *into* the queue, not when they come out. Otherwise the same node gets added again and again and the work blows up.
 
 ## 4. Token bucket rate limiter
 
-**When:** any "allow N operations per second" rule — API quotas, job dispatch, retry pacing. This pattern is worth knowing as production code, not just as an interview answer.
+**When:** any "allow N operations per second" rule — API quotas, job dispatch, retry pacing. This one is worth knowing as real code, not just as an interview answer.
 
 ```python
 import time
@@ -91,11 +91,11 @@ class TokenBucket:
         return False
 ```
 
-Refill continuously, spend one token per request. Simple, and it degrades gracefully under bursts up to the bucket size.
+Tokens refill over time, and each request spends one. Simple, and it handles short bursts up to the bucket size without falling over.
 
 ## 5. Decoder sampling: greedy, top-k, top-p
 
-**When:** implementing or even just understanding how an LLM picks its next token. Given logits, sampling is a small piece of NumPy:
+**When:** understanding how an LLM picks its next token. I wrote this while studying for interviews, because sampling questions kept coming up. Given logits, the whole thing is a small piece of NumPy:
 
 ```python
 import numpy as np
@@ -120,11 +120,11 @@ def sample(logits, temperature=1.0, top_k=0, top_p=1.0, rng=None):
     return int(rng.choice(len(probs), p=probs))
 ```
 
-Greedy is the special case where you always take the argmax. Writing this once taught me more about what temperature and nucleus sampling actually do than any diagram.
+Greedy decoding is just the special case where you always take the argmax. Writing this once taught me more about temperature and top-p than any diagram did. The knobs finally made sense when I saw they are just ways of cutting the tail of a probability distribution.
 
 ## 6. Retry with exponential backoff
 
-**When:** calling anything over a network. Fixed-interval retries create thundering herds; backoff with jitter spreads them out.
+**When:** calling anything over a network. If every client retries at the same fixed interval, they all hit the server at the same time and make the problem worse. Backoff with a bit of randomness spreads them out.
 
 ```python
 import random, time
@@ -139,6 +139,6 @@ def call_with_retry(fn, attempts=4, base=0.5):
             time.sleep(base * (2 ** i) + random.uniform(0, 0.1))
 ```
 
-## The meta-pattern
+## What I took away
 
-Every pattern above is a trade: a heap trades a full sort for O(n log k); a sliding window trades memory of positions for a single pass; a token bucket trades perfect fairness for simplicity. Noticing *which trade a problem is asking for* is most of problem solving — the code afterwards is usually short.
+Every pattern here is a trade. A heap trades a full sort for O(n log k). A sliding window trades remembering positions for a single pass. A token bucket trades perfect fairness for being simple. Most of problem solving, for me, is noticing which trade the problem is asking for. After that, the code is usually short.
