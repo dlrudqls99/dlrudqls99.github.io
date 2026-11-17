@@ -5,29 +5,32 @@ date: 2026-07-02
 categories: [AI, Engineering, Best-Practices]
 tags: [harness-engineering, ai-agents, context-management, prompt-engineering, workflow-design]
 ---
-## Main Content and Key Insights
 
-### Same AI Model, Different Results: The Difference Lies in the "Environment"
+Sometimes I use the same model with almost the same prompt and get a much worse result than the day before. My first instinct was to blame the model. This lecture argues the problem is usually somewhere else: the environment the AI is working in.
 
-Even when using the same AI model and prompt, inconsistent results do not necessarily indicate a problem with the model. Instead, the issue often comes from the fact that the AI is working in a different "environment" each time--that is, a different harness.
+These are my notes from the lecture.
 
-In real-world industry settings, Silicon Valley engineers tend to focus more on improving the environment around the model than on the model's limitations.
+## Same model, different results
 
-### The Limits of Prompt Engineering
+Even with the same AI model and the same prompt, results can be inconsistent. The lecture's point is that this does not necessarily mean the model is the problem. The AI may be working in a different "environment" each time — a different **harness**.
 
-Prompt engineering is an important skill for getting better answers, but it is optimized for individual conversations and is not well-suited for long-term projects.
+Apparently, this is where engineers in Silicon Valley put their effort. Less on the model's limitations, more on improving the environment around the model.
 
-In large-scale work that spans multiple sessions, repeatedly explaining the same context and rules becomes inefficient.
+## Where prompt engineering stops
 
-### The Importance of Environment Design, or Harness Engineering
+Prompt engineering is a real skill, and it does improve the quality of responses. But it is optimized for individual conversations, and it is not well suited to long-term projects.
 
-Harness engineering is the practice of systematically designing the context, verification loops, workflows, rules, and other elements that AI needs to complete work effectively.
+In large-scale work that spans many sessions, explaining the same context and the same rules again and again becomes inefficient. I have felt this myself, re-typing the same background at the start of every session.
 
-Through this, AI can perform tasks more reliably and independently.
+## What harness engineering is
 
-As an example, the lecture introduces a LangChain case in which performance improved by 14% by improving the harness while using the same model and prompt environment. This was related to AI model orchestration based on chain-of-thought approaches.
+**Harness engineering** is the practice of designing that environment on purpose: the context, the verification loops, the workflows, the rules, and everything else the AI needs to complete work effectively. Done well, the AI can perform tasks more reliably and more independently.
 
-## The Three Stages of Harness Engineering Development
+The example that stuck with me: a LangChain case where performance improved by **14%** by improving only the harness, with the same model and the same prompt environment. The improvement was related to AI model orchestration based on chain-of-thought approaches.
+
+## The three stages
+
+The lecture describes how this developed, in three stages:
 
 | Stage | Description |
 |---|---|
@@ -35,96 +38,77 @@ As an example, the lecture introduces a LangChain case in which performance impr
 | Stage 2: Context Engineering | Supplying the context, rules, and project information AI needs to work effectively |
 | Stage 3: Harness Engineering | Designing the entire working environment, including verification loops, workflows, and environment orchestration |
 
-## Four Core Elements of Harness Engineering
+## Four core elements
 
-### 1. Context
+A harness has four core elements.
 
-The project habits, rules, and background information that AI needs to know.
+**1. Context.** The project habits, rules, and background information the AI needs to know.
 
-### 2. Limitations
+**2. Limitations.** Rules and restrictions, such as prohibiting pushes to the main branch.
 
-Rules and restrictions, such as prohibiting pushes to the main branch.
+**3. Workflow.** The sequence of work, including planning, execution, and verification loops.
 
-### 3. Workflow
+**4. Verification.** The systems for confirming whether the AI completed the work properly, including testing and review processes.
 
-The sequence of work, including planning, execution, and verification loops.
+## Designing a harness: six axes
 
-### 4. Verification
+The lecture divides harness design into six major axes, each one part of a continuous cycle:
 
-Systems for confirming whether AI has completed the work properly, including testing and review processes.
+1. **Structure Design** — folder structure, tools, and environment setup.
+2. **Context Configuration** — loading and managing the information the AI needs.
+3. **Planning** — determining what work should be done and how it should be approached.
+4. **Execution** — coordinating work instructions, agent patterns, and related processes.
+5. **Verification** — evaluating outputs and ensuring reliability.
+6. **Improvement** — identifying issues and redesigning the environment through iteration.
 
-## Designing a Harness Across Six Axes
+## Context: more is not better
 
-The lecture explains that harness design can be divided into six major axes, each forming part of a continuous cycle.
+This part corrected an assumption of mine. I used to think giving the AI more context is always better. The lecture says it is not. What matters is supplying the necessary information at the right time and in the right place.
 
-1. **Structure Design**  
-   Folder structure, tools, and environment setup
-
-2. **Context Configuration**  
-   Loading and managing the information AI needs
-
-3. **Planning**  
-   Determining what work should be done and how it should be approached
-
-4. **Execution**  
-   Coordinating work instructions, agent patterns, and related processes
-
-5. **Verification**  
-   Evaluating outputs and ensuring reliability
-
-6. **Improvement**  
-   Identifying issues and redesigning the environment through iteration
-
-## Principles for Managing Context Data
-
-Providing more context is not always better. What matters is supplying the necessary information at the right time and in the right place.
-
-Claude Code configuration files are structured across three layers:
+In Claude Code, configuration files are structured across three layers:
 
 1. User level
 2. Project level
 3. Folder or module level
 
-Rules in lower-level layers take priority.
+Rules in the lower-level layers take priority.
 
-A `CLAUDE.md` file should be kept lightweight, around 200 lines or fewer. Longer documents should be separated into a rules folder and referenced only when needed.
+A `CLAUDE.md` file should be kept lightweight, around **200 lines or fewer**. Longer documents should be separated into a rules folder and referenced only when needed.
 
-Managing context usage in the conversation window is also important during actual work. If token usage exceeds 40%, the lecture recommends starting a new session.
+There is also a tip about the conversation window itself. Managing context usage during actual work matters, and if token usage exceeds **40%**, the lecture recommends starting a new session. I have definitely let sessions run way past that.
 
-## Environment Control and Improvement as the Practical Path to Better AI Performance
+## The part we can actually change
 
-AI models are described as something we "rent" from external providers and therefore cannot directly control.
+AI models are something we "rent" from external providers. We cannot directly control them.
 
-However, the working environment is something developers can design and improve themselves. Because of this, environment design is a realistic and practical way to improve AI performance.
+The working environment is different. It is something developers can design and improve themselves. That is why environment design is such a practical path to better AI performance: it is the lever that is actually in our hands.
 
-## Expansion of AI Use Cases
+## Not only for coding
 
-Harness engineering is not limited to coding. It can also be applied to repeated knowledge-work processes such as YouTube content creation, research, data analysis, and webtoon production.
+Harness engineering is not limited to coding. The lecture says it can also be applied to other repeated knowledge-work processes, such as YouTube content creation, research, data analysis, and webtoon production.
 
-## Important Concepts and Definitions
+## Words I wrote down
 
-| Term | Definition |
-|---|---|
-| Harness Engineering | The practice of designing and managing a working environment where AI can operate independently, reliably, and consistently |
-| Prompt Engineering | The technique of designing effective prompts to improve the quality of AI responses |
-| Context Engineering | The practice of providing AI with project information, rules, and background context to improve understanding and performance |
-| Verification Loop | A process for automatically testing and reviewing AI outputs to ensure quality and reduce errors |
-| `CLAUDE.md` | A configuration and rules document referenced during AI work. It should remain lightweight and focused on essentials |
+**Harness Engineering** — the practice of designing and managing a working environment where AI can operate independently, reliably, and consistently.
 
-## Conclusion and Implications
+**Prompt Engineering** — the technique of designing effective prompts to improve the quality of AI responses.
 
-The key to successfully using AI lies less in the model itself and more in the design of the environment around it.
+**Context Engineering** — the practice of providing AI with project information, rules, and background context to improve understanding and performance.
 
-Moving beyond prompt refinement, it is essential to build strong context structures, design workflows, and introduce verification loops. These all belong to the broader discipline of harness engineering.
+**Verification Loop** — a process for automatically testing and reviewing AI outputs to ensure quality and reduce errors.
 
-A harness is especially important for complex and large-scale projects. Through gradual improvement and cyclical iteration, it can increase both AI performance and reliability.
+**`CLAUDE.md`** — a configuration and rules document referenced during AI work. It should remain lightweight and focused on essentials.
 
-As experience with AI grows, the ability to design effective harnesses becomes a competitive advantage that can determine the success or failure of a project.
+## What I took away
 
-This concept can also be extended beyond coding to other forms of knowledge work, making it valuable across many industries.
+The key to using AI successfully lies less in the model itself and more in the design of the environment around it. Moving beyond prompt refinement means building strong context structures, designing workflows, and introducing verification loops. That whole discipline is harness engineering.
 
-## Notes and Uncertain Information
+A harness matters especially for complex and large-scale projects, and it is never really finished. Through gradual improvement and cyclical iteration, it increases both AI performance and reliability. The lecture's claim is that as experience with AI grows, the ability to design effective harnesses becomes a competitive advantage — the kind that can determine the success or failure of a project.
 
-Practical exercises and more detailed case studies are expected to be covered in later clips.
+And since the same thinking extends beyond coding to other forms of knowledge work, it is probably worth learning even outside of software.
 
-Some technical terms, such as MCP and skill management, were mentioned only briefly in the video, and their detailed explanations remain unclear.
+## Things that were not clear
+
+Practical exercises and more detailed case studies are expected to be covered in later clips, so this one stays at the concept level.
+
+Some technical terms, such as MCP and skill management, were mentioned only briefly in the video, and their detailed explanations remain unclear to me. I need to look those up separately.

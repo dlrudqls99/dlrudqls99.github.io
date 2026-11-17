@@ -5,25 +5,30 @@ date: 2026-07-02
 categories: [AI, Engineering, Cost-Optimization]
 tags: [ai-agents, token-optimization, codebase-design, cost-management, cache-strategy]
 ---
-## What Is an AI-Ready Codebase?
 
-An AI-ready codebase is a codebase designed so that an AI agent can enter a new session and work accurately without losing its way.
+My mental model of AI coding agents used to be simple: the agent reads some code, writes some code, done. This lecture broke that model. Most of the cost, and most of the failures, happen before any code is written, while the agent is just trying to find its way around.
 
-Just as a human developer may need about a week to become familiar with a codebase, AI agents must also re-evaluate their surroundings each time they enter a session.
+These are my notes from the lecture. It has two big parts: making a codebase ready for agents, and then managing the token cost of actually using them.
 
-The cause of agent failure is often not poor code quality itself, but the **cost of exploration and understanding**. If the agent cannot find the right location, it wastes time reading unnecessary code and may create duplicate implementations.
+## What "AI-ready" means
 
-## Practical Example and Problem Analysis
+An **AI-ready codebase** is a codebase designed so that an AI agent can enter a new session and work accurately without losing its way.
 
-For example, during a payment logic modification task, an agent may miss 5 out of 40 related files, modify duplicate payment code, and then break the tests.
+The comparison the lecture uses: a human developer may need about a week to become familiar with a codebase. An AI agent has the same problem, except it must re-evaluate its surroundings every time it enters a session.
+
+And when agents fail, the cause is often not poor code quality itself. It is the **cost of exploration and understanding**. If the agent cannot find the right location, it wastes time reading unnecessary code, and it may create duplicate implementations of things that already exist.
+
+## The example that made it click
+
+During a payment logic modification task, an agent may miss 5 out of 40 related files, modify duplicate payment code instead, and then break the tests.
 
 In such cases, 80% of token usage may be spent on exploration, while only 20% is used for actual code modification.
 
-Building an AI-ready codebase is about significantly reducing exploration cost and optimizing the ratio between exploration and code modification.
+So building an AI-ready codebase is about significantly reducing exploration cost, and fixing that ratio between exploration and modification.
 
-## Two-Step Process for Building an AI-Ready Codebase
+## Two steps to build one
 
-### 1. Check Codebase Health
+### 1. Check codebase health
 
 Maintaining a healthy codebase is the prerequisite. This includes:
 
@@ -34,9 +39,9 @@ Maintaining a healthy codebase is the prerequisite. This includes:
 
 If the codebase is unhealthy, creating an accurate exploration map is meaningless.
 
-### 2. Create Cartography
+### 2. Create cartography
 
-This means creating a customized codebase "map" for AI agents.
+The second step is creating a customized codebase "map" for AI agents. The lecture calls this **cartography**.
 
 The main elements of the map include:
 
@@ -48,15 +53,9 @@ The main elements of the map include:
 
 Both codebase health and cartography must be in place for an agent to explore and work efficiently.
 
-## How Code Quality Priorities Change in the AI Era
+## How code quality priorities change
 
-Traditional human-centered code quality focuses on:
-
-- Ease of maintenance
-- Readability
-- Bug reduction
-
-AI-centered code quality focuses on different practical effects:
+Traditional human-centered code quality focuses on ease of maintenance, readability, and bug reduction. Those still matter. But in the AI era, the same practices do different jobs:
 
 - Test coverage acts as a signal system that enables agent self-verification.
 - Consistent conventions are essential for agents to generalize and reuse patterns.
@@ -64,15 +63,15 @@ AI-centered code quality focuses on different practical effects:
 - Removing code smells prevents agents from reproducing low-quality code.
 - Test code plays a central role in allowing AI agents to detect and fix errors inside their feedback loops.
 
-## Detailed Concept of AI-Ready Cartography and Skill Lecture
+I found this reframing useful. The practices are the ones I already knew. The reasons changed.
+
+## Cartography in more detail
 
 The core of an AI-focused map is to give the agent accurate "instruction coordinates" so it can recognize the correct entry point.
 
 The map is not just documentation. It includes dependency maps, glossaries, verification routines, and path information.
 
-The speaker developed and provides an **AI Readiness Cartography Skill** that automates this work.
-
-The skill scores several categories and presents the results as a report. Categories include:
+The speaker developed and provides an **AI Readiness Cartography Skill** that automates this work. The skill scores several categories and presents the results as a report. Categories include:
 
 - Navigation
 - Context quality
@@ -82,17 +81,11 @@ The skill scores several categories and presents the results as a report. Catego
 - Freshness
 - Outcomes
 
-## AI Readiness Evaluation Demo and Skill Usage Practice
+## The demo
 
-The speaker runs the skill on an actual demo project.
+The speaker runs the skill on an actual demo project. The demo shows how rubric-based scoring works and how the evaluation results identify areas for improvement.
 
-The demo shows how rubric-based scoring works and how the evaluation results identify areas for improvement.
-
-Example evaluation results include:
-
-- Low navigation score
-- Good context document quality
-- Low scores in other categories
+Example evaluation results include a low navigation score, good context document quality, and low scores in other categories.
 
 The generated map includes documents such as `CLAUDE.md` and architecture documentation, clearly showing the entry paths that agents should reference.
 
@@ -103,7 +96,7 @@ The report also includes a practical ROI action plan. Suggested actions include:
 - Introducing visualization
 - Using ADRs, or Architecture Decision Records
 
-## Need for Regular AI-Ready Codebase Checks and Automation
+## Check regularly, and automate the checking
 
 One-time checks have limited effect. Continuous improvement through regular reviews is essential.
 
@@ -111,27 +104,19 @@ The process of diagnosis, reporting, PR creation, and code application should be
 
 The lecture re-emphasizes that building an AI-ready codebase is the foundation for improving AI agent performance.
 
-## Preview of the Upcoming Second Brain Topic
+## Coming next: a second brain
 
 The lecture previews the topic of building a **second brain**, which organizes non-code knowledge such as ADRs, meeting notes, and design documents so that agents can reference them.
 
-Assets are being accumulated through previous topics such as:
+Assets are being accumulated through previous topics such as AI-ready codebases, `CLAUDE.md` management, test-driven development (TDD), continuous deployment (CD), and AI agent plugin management.
 
-- AI-ready codebases
-- `CLAUDE.md` management
-- Test-driven development, or TDD
-- Continuous deployment, or CD
-- AI agent plugin management
+## Why tokens became a money problem
 
-## Overview of Token Optimization and Cost Management
-
-As AI usage increases, context size and token consumption rise sharply, creating higher billing costs.
-
-Large codebases, second brains, and specification documents can consume hundreds of thousands of tokens.
+As AI usage increases, context size and token consumption rise sharply, creating higher billing costs. Large codebases, second brains, and specification documents can consume hundreds of thousands of tokens.
 
 This section introduces hands-on practice for analyzing and optimizing token usage through dashboards and cost gate policies.
 
-A token is the smallest unit of text processed by a model. It does not correspond one-to-one with words. Instead, text is split using a BPE, or Byte Pair Encoding, vocabulary.
+First, the basics. A **token** is the smallest unit of text processed by a model. It does not correspond one-to-one with words. Instead, text is split using a BPE, or Byte Pair Encoding, vocabulary.
 
 Approximate token characteristics:
 
@@ -141,7 +126,7 @@ Approximate token characteristics:
 
 Korean can be used, but English is recommended when maximizing cost efficiency is the priority.
 
-## Token Usage and Cost Examples
+## What the numbers look like
 
 | Category | Approximate Token Count | Cost |
 |---|---:|---:|
@@ -151,21 +136,17 @@ Korean can be used, but English is recommended when maximizing cost efficiency i
 | Team usage | Based on 20 people | About 1,000 USD |
 | Annual usage | Team basis, 12 months | About 12,000 USD |
 
-In large organizations, token costs can increase exponentially.
+In large organizations, token costs can increase exponentially. Without cost control, there is a high risk of rapidly escalating expenses.
 
-Without cost control, there is a high risk of rapidly escalating expenses.
-
-## Difference Between Individual and Organizational Cost Awareness
+## Individuals feel the bill. Companies don't.
 
 Individual users tend to use AI more carefully because they pay the bill directly.
 
-At the company level, however, users often lack cost awareness and may use AI as though usage were unlimited.
-
-This creates a need for leadership-level control policies.
+At the company level, however, users often lack cost awareness and may use AI as though usage were unlimited. This creates a need for leadership-level control policies.
 
 The lecture plans to present response strategies and optimization guidelines for this problem.
 
-## Role and Importance of Prompt Cache
+## Prompt cache: reuse the fixed part
 
 When the same prefix, or fixed prompt section, is repeatedly sent, the server temporarily stores the computation result in a cache to reduce cost.
 
@@ -177,7 +158,7 @@ The cache TTL, or Time To Live, is about 5 minutes. After that, the cache expire
 
 Long continuous work sessions can maximize the benefit of caching. However, reconnecting during work or changing the prefix can cause a sharp increase in cost.
 
-## Cache-Related Precautions
+## Cache precautions
 
 During a session, avoid changing the prefix, including:
 
@@ -185,25 +166,21 @@ During a session, avoid changing the prefix, including:
 - System prompts
 - Model selection
 
-Changing these can delete the existing cache and significantly increase token cost.
-
-For example, switching models mid-session from Opus to Sonnet can remove the cache benefit.
+Changing these can delete the existing cache and significantly increase token cost. For example, switching models mid-session from Opus to Sonnet can remove the cache benefit.
 
 When restoring a session, token limits may force re-input, creating a sudden cost increase.
 
 The lecture mentions a real case in which Claude Code asked the user whether cache loss was acceptable and recommended compacting the session.
 
-## Guide to Efficient Prompt Writing
+## How to write prompts with the cache in mind
 
 Fixed information, such as `CLAUDE.md` and second-brain content, should be placed in the cacheable area.
 
-Variable information, such as the current time or user message, should be separated into the cache-miss area.
-
-For example, placing the current time later in the prompt can maximize the size of the cacheable area.
+Variable information, such as the current time or user message, should be separated into the cache-miss area. For example, placing the current time later in the prompt can maximize the size of the cacheable area.
 
 Many open-source LLM tools and systems are also developing prompt builders based on this caching concept.
 
-## Six Core Techniques for Token Optimization
+## Six core techniques for token optimization
 
 1. Read large files once and use cache effectively. Claude Code handles some of this automatically.
 2. Place `CLAUDE.md` near the top of the document structure for quick reference.
@@ -214,23 +191,18 @@ Many open-source LLM tools and systems are also developing prompt builders based
 
 Optimization becomes more effective when users have a basic understanding of how AI agents work.
 
-## Anti-Patterns and Inefficient Practices to Avoid
+## Anti-patterns to avoid
 
-Avoid repeatedly sending large files in every session. This can quickly exceed the session token limit.
-
-Avoid duplicate context input, as it neutralizes the benefit of caching.
-
-Avoid keeping a prefix cache that will not be used within 5 minutes, as this can increase unnecessary cost.
-
-Avoid frequent `CLAUDE.md` resets and session resets during work, as they reduce cache effectiveness.
-
-Avoid careless offloading strategies, which can create excessive costs.
-
-Avoid simply retaining completed work nodes, as this wastes context.
+- Avoid repeatedly sending large files in every session. This can quickly exceed the session token limit.
+- Avoid duplicate context input, as it neutralizes the benefit of caching.
+- Avoid keeping a prefix cache that will not be used within 5 minutes, as this can increase unnecessary cost.
+- Avoid frequent `CLAUDE.md` resets and session resets during work, as they reduce cache effectiveness.
+- Avoid careless offloading strategies, which can create excessive costs.
+- Avoid simply retaining completed work nodes, as this wastes context.
 
 It is important to remember that reducing cost too aggressively may also reduce AI performance.
 
-## Practice Using Token Consumption Logs and Analysis Skills
+## Practicing with token logs
 
 The lecture demonstrates automatically parsing JSON log files from Claude Code sessions to generate token and cost usage dashboard reports.
 
@@ -241,11 +213,9 @@ The logs include:
 - Cache read information
 - Cache write information
 
-The analysis script visualizes session-level and project-level efficiency, cost, cache hit rate, and tool call frequency.
+The analysis script visualizes session-level and project-level efficiency, cost, cache hit rate, and tool call frequency. The system uses rubric-based scoring and can be customized for each team or company.
 
-The system uses rubric-based scoring and can be customized for each team or company.
-
-## Key Report Metrics and Evaluation Criteria
+## Key report metrics
 
 | Metric | Description | Top Score Standard |
 |---|---|---|
@@ -256,7 +226,7 @@ The system uses rubric-based scoring and can be customized for each team or comp
 
 The higher the cache utilization, the more unnecessary token retransmission is reduced, resulting in greater cost savings.
 
-## Real-World Example and Dashboard Demonstration
+## A real dashboard example
 
 In a test project, there were:
 
@@ -264,9 +234,7 @@ In a test project, there were:
 - 347 USD in total cost
 - 11 USD average cost per session
 
-The cache hit rate was 89%, and the average number of tool calls was 13, which was relatively good.
-
-The score was around the 90-point range and was acceptable overall, but the score could decline as the amount of work increases.
+The cache hit rate was 89%, and the average number of tool calls was 13, which was relatively good. The score was around the 90-point range and was acceptable overall, but the score could decline as the amount of work increases.
 
 The dashboard can reveal recommendations such as:
 
@@ -274,9 +242,9 @@ The dashboard can reveal recommendations such as:
 - Insufficient compacting
 - Excessive offloading
 
-## Concept and Use of Cost Gates
+## Cost gates: catching it in real time
 
-A dashboard visualizes past cost data, while a cost gate provides real-time cost monitoring and proactive alerts or controls.
+A dashboard visualizes past cost data, while a **cost gate** provides real-time cost monitoring and proactive alerts or controls.
 
 A cost gate can implement warnings or execution-stop hooks when token usage exceeds a threshold at the session level.
 
@@ -284,10 +252,10 @@ At the PR level, if cumulative session cost exceeds a threshold, it can trigger 
 
 The lecture proposes a systematic cost reduction strategy that combines real-time cost management with post-work cost improvement.
 
-## Turning Cost Management into a Team-Level Shared Asset
+## What I took away
 
-The key to cost reduction is optimizing caching and token efficiency not at the individual level, but at the team, department, or organizational level.
+The key to cost reduction is optimizing caching and token efficiency not at the individual level, but at the team, department, or organizational level. One person being careful does not fix a team's bill.
 
-The lecture emphasizes the importance of building a process that connects automation hooks and dashboards to usage monitoring and improvement execution.
+The lecture emphasizes building a process that connects automation hooks and dashboards to usage monitoring and improvement execution. That connects back to the first half of the lecture, too: the AI-ready codebase lowers exploration cost, the cache discipline lowers repeat cost, and the dashboard tells you whether either of them is working.
 
 The lecture concludes by previewing the next section, which will cover how to use AI for code reviews.

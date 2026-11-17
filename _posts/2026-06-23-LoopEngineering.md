@@ -6,105 +6,87 @@ categories: [AI, Engineering, Automation]
 tags: [loop-engineering, ai-agents, autonomous-systems, prompt-engineering]
 ---
 
-## Summary
+I keep seeing the words "loop engineering" lately. First there was prompt engineering, then context engineering, then harness engineering, and now loops. I wanted to know what is actually new here, so I watched this video by a developer from Anthropic and took notes.
 
-This video provides an in-depth exploration of loop engineering, a rapidly emerging concept in AI system design, especially relevant for autonomous agents and workflows that iterate over tasks with verification and adaptation. The presenter, a developer from Anthropic, distills key principles, practical tips, and real-world demo examples, highlighting the distinction between traditional prompt/context/harness engineering and the new paradigm of loop engineering.
+These are my notes, so I can come back to them later instead of rewatching the whole thing.
 
-## Core Concepts and Definitions
+## What a loop actually is
 
-**Loop Engineering** replaces human prompt-input interactions with a system that autonomously manages, executes, and verifies tasks via AI agents.
+Loop engineering means replacing the back-and-forth I do with an AI — I type a prompt, check the result, type again — with a system that runs that cycle by itself. The system manages, executes, and verifies tasks through AI agents, with much less human input in the middle.
 
-It evolves from previous AI engineering methods:
+It grew out of the earlier ideas:
 
-- **Prompt Engineering**: Crafting inputs to get good AI responses.
-- **Context Engineering**: Providing sufficient context to AI for better answers.
-- **Harness Engineering**: Controlling AI's unintended outputs through management layers.
+- **Prompt Engineering**: writing good inputs to get good responses.
+- **Context Engineering**: giving the AI enough context so its answers get better.
+- **Harness Engineering**: controlling the AI's unintended outputs through management layers around it.
 
-**Loop Engineering** involves designing a self-regulating agent system that:
-- Initiates tasks (triggers)
-- Runs iterative loops with goal checks
-- Verifies via separate validation processes
-- Records memories to improve future iterations autonomously
+A loop system does four things. It starts tasks on a trigger. It runs in iterations, checking against the goal as it goes. It verifies results through a separate validation process. And it records memories, so future runs can improve on their own.
 
-**Key distinction from Cronjobs**: Loops use models capable of state awareness and autonomous decision-making rather than fixed script execution.
+This is also where a loop is different from a **cronjob**. A cronjob just runs a fixed script on a schedule. A loop uses a model that is aware of the current state and makes decisions along the way. That difference sounded small to me at first. It is not.
 
-## Loop Engineering's Two Essential Layers
+## Two layers
 
-| Layer | Description |
-|-------|-------------|
-| **Inner Loop** | Automated agent's internal process: sets goals, executes tasks, checks results, repeats accordingly. |
-| **Outer Loop** | Orchestration of multiple inner loops or tasks autonomously, ideally without human intervention. |
+The video splits a loop into two layers.
 
-## Six Key Components of a Well-Designed Loop
+The **inner loop** is what happens inside one agent: it sets a goal, executes the task, checks the result, and repeats.
 
-According to Eddy Ousmani:
+The **outer loop** sits above it. It coordinates multiple inner loops or tasks on its own, ideally without a human stepping in.
 
-| Component | Role/Function |
-|-----------|---------------|
-| **Automation** | Triggers and schedules the loop execution based on conditions or events. |
-| **Work Tree** | Manages parallel agents/tasks and avoids conflicts (optional, especially for concurrency). |
-| **Skill** | Encoded project knowledge, rules, or prompts to guide the agent's behavior. |
-| **Connector** | Interfaces with external tools/environments (e.g., APIs, CLIs) for real-world communication. |
-| **Sub-agent** | Specialized agents for subdivision of tasks like generation vs. validation. |
-| **Memory** | Stores learned outcomes and states from prior runs to improve and inform future iterations. |
+## The six parts of a loop
 
-## Critical Requirements for Loop Success
+According to Eddy Ousmani, a well-designed loop has six components:
 
-- **Trigger Conditions**: Must have defined criteria for when the loop starts (e.g., a failed test, score below threshold).
-- **Verifiable Goal/Termination Condition**: The loop must have a clear, measurable finish point to prevent endless running and cost waste (e.g., tests passing, achieving a performance score).
+- **Automation** — triggers the loop and schedules it, based on conditions or events.
+- **Work Tree** — manages parallel agents and tasks so they do not conflict with each other. Optional, mostly needed when things run at the same time.
+- **Skill** — the encoded project knowledge, rules, or prompts that guide how the agent behaves.
+- **Connector** — the interface to external tools and environments, like APIs and CLIs, so the agent can actually communicate with the real world.
+- **Sub-agent** — specialized agents that split the work, for example one that generates and one that validates.
+- **Memory** — the stored outcomes and states from earlier runs, used to inform and improve the next iterations.
 
-> **Warning**: Absence of verification leads to an endless loop that only consumes tokens and money without yielding results.
+## Two things a loop cannot skip
 
-## Why Loop Engineering is Hot Right Now
+First, **trigger conditions**: a clear rule for when the loop starts. A failed test. A score below a threshold. Something concrete and defined in advance.
 
-1. Recent AI models (e.g., GPT-4, Claude) can execute long-running autonomous tasks reliably, unlike earlier models that frequently lost track or failed early.
-2. Separation of generation and evaluation roles within the agent system improves quality and reduces bias (generators cannot self-grade).
-3. Enables continuous improvement workflows such as:
-   - **Auto Research**: Agents performing iterative experiments and retaining memory to improve over time without human input.
-4. Advances in verification modeling allow loops to "know" when their goals are met.
+Second, a **verifiable goal**: a clear, measurable finish point, like tests passing or a performance score being reached. This is what stops the loop from running forever and wasting cost.
 
-## Real-world Example: Web Optimization Loop
+The video is blunt about this part. Without verification, a loop has no way to know it is done. It just keeps going, consuming tokens and money, and yields nothing.
 
-### Task
-Optimize a lecture website's Lighthouse score (Google's open-source metric evaluating page performance, accessibility, best practices, and SEO).
+## Why this is everywhere right now
 
-### Process
-An AI loop repeatedly assesses, modifies, and re-evaluates the website until reaching a 90+ score.
+As I understood it, there are four reasons.
 
-- Iterations reduced file sizes from **179KB → 134KB → 68KB**
-- Cost controlled with a capped number of iterations and manual triggers
-- Separate sub-agents handled modification and scoring
+Recent models like GPT-4 and Claude can run long autonomous tasks reliably. Earlier models frequently lost track of the work or failed early, so loops were not practical before.
 
-### Outcome
-- The loop ran about three times, improving scores stepwise
-- Stopped when improvement plateaued
+Separating generation and evaluation into different roles improves quality and reduces bias. A generator cannot grade its own work honestly; a separate evaluator can.
 
-## Practical Advice and Risks
+Loops enable workflows that keep improving without a human in each round. The example given was **auto research**: agents run iterative experiments, keep the memory of what happened, and improve over time on their own.
 
-- **Start manually**: Do not fully automate loops from day one. Begin with supervised runs and incrementally ramp up autonomy.
-- **Set hard limits**: Max iterations, budget thresholds, and escalation protocols are crucial.
-- **Beware of token and cost overruns** if loops run unattended without proper checks.
-- Loops need accurate validation mechanisms; otherwise, they waste resources producing meaningless results.
-- Use loops primarily for repetitive, well-verified tasks (e.g., code refactoring, migration, review) but be cautious with subjective or one-off work.
-- **Not everything should use loops**: Tasks with no clear verification or strictly one-time actions are poor candidates.
+And verification models have advanced, so a loop can now actually "know" when its goal is met.
 
-## Loop Engineering Guidelines
+## The demo: a website optimization loop
 
-| Criterion | Recommendation |
-|-----------|----------------|
-| **Task nature** | Must be repetitive or require iterative refinement |
-| **Verification available** | Essential, must have objective criteria to assess end |
-| **Initial loop deployment** | Start manual, add automation gradually |
-| **Cost monitoring** | Set token/monetary limits, and iteration caps |
-| **Separation of roles** | Split generator and evaluator agents |
-| **Applicability** | Best for code refactor, optimization, integration tasks |
+The concrete example was optimizing a lecture website's **Lighthouse score**. Lighthouse is Google's metric for page performance, accessibility, best practices, and SEO. The goal was a score of 90 or higher.
 
-## Key Insights and Conclusions
+The loop assessed the site, modified it, and re-evaluated it, over and over. File sizes dropped step by step: **179KB → 134KB → 68KB**. Separate sub-agents handled the modification and the scoring, so the agent making changes was not the one grading them.
 
-- Loop engineering represents a paradigm shift where AI agents supervise themselves with minimal human prompt input.
-- Effective loops combine autonomous task generation, verification, memory, and triggering mechanisms for long-running workflows.
-- Proper design and safeguards prevent runaway loops wasting time and money.
-- The true value lies not in knowing how to build loops but in the **impact measured by concrete task improvements**.
-- **AI is a tool to complete work efficiently**, not an end in itself, emphasizing workflow understanding before tool adoption.
-- Despite automation advances, **human oversight remains critical** for some tasks—loops do not replace all forms of quality control.
-- Loop engineering is particularly effective where clear goals and verifiable outcomes allow safe autonomy.
+Costs were controlled with a capped number of iterations and manual triggers. In the end, the loop ran about three times, the scores improved stepwise, and it stopped when the improvement plateaued. That stopping part matters as much as the improving part.
+
+## Advice I wrote down
+
+**Start manually.** Do not fully automate a loop from day one. Begin with supervised runs and increase the autonomy little by little.
+
+**Set hard limits.** Maximum iterations, budget thresholds, and escalation protocols for when a human needs to step in. An unattended loop without proper checks can quietly burn through tokens and money.
+
+**Validation has to be accurate.** A loop is only as good as its checker. Without an accurate way to verify results, the loop just wastes resources producing meaningless output, faster.
+
+**Use loops for the right work.** They fit repetitive tasks with clear verification: code refactoring, migration, review, optimization, integration. Be cautious with subjective or one-off work. A task with no clear verification, or a strictly one-time action, is a poor candidate for a loop. Not everything should use one.
+
+## What I took away
+
+The shift here is that the agents supervise themselves. A good loop combines the trigger, the task generation, the verification, the memory, and the separation between the agent that makes things and the agent that checks them. Put together well, that is what makes long-running work safe to leave alone.
+
+But the point I underlined is this: the true value is not in knowing how to build loops. It is in the **impact measured by concrete improvements** — the score that actually went up, the file size that actually went down. AI is a tool to complete work efficiently, not an end in itself. Understanding the workflow comes before adopting the tool.
+
+And even in the video's own framing, human oversight remains critical for some tasks. Loops do not replace all forms of quality control. They work best exactly where the goals are clear and the outcomes can be verified.
+
+For me, the practical lesson is smaller. Before I automate anything, I need two things written down: a goal I can verify, and a limit I can enforce. If I cannot write those down, I am not ready for a loop.
