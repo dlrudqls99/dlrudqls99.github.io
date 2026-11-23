@@ -39,8 +39,8 @@ permalink: /graph/
   nodes.forEach(function (n) { n.r = 5 + Math.min(n.deg, 6) * 1.4; });
 
   var VAR_NAMES = ['--accent', '--accent-2', '--green', '--orange', '--yellow', '--red'];
-  var FALLBACK = ['#93b4e0', '#c7d5ec', '#9cc5a5', '#afa8e8', '#9fbf8f', '#de7a6d'];
-  var catColor = {}, fgColor = '#edf1f7', borderColor = '#1e2a44';
+  var FALLBACK = ['#ff6ca4', '#bda0ff', '#36dec6', '#ff9550', '#ffd05a', '#ff7365'];
+  var catColor = {}, fgColor = '#f8eef6', borderColor = '#3a2158';
   function readColors() {
     var cs = getComputedStyle(document.documentElement);
     var cats = [];

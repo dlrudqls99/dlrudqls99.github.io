@@ -1,7 +1,7 @@
-/* Knowledge-base theme: Scole Navy (dark, default) / Scole Paper (light)
-   Inspired by the Inoue Brothers Brushed Scole Stripe — its navy, ash blue and ink,
-   on cool neutral grounds. (Ecru dropped: as a full-screen color it reads yellow.)
-   Core colors: navy #1E3A66 · ash blue #93B4E0 · ink #0C1220 · cool paper #F8F9FB */
+/* Knowledge-base theme: Leonida Sunset — dark "Vice Night" / light "Leonida Day"
+   Inspired by the GTA VI cover sky: a magenta → violet → orange sunset over deep
+   plum, with teal water accents. Sunset gradient #FF5C8A · #A855F7 · #FF9E57,
+   teal #2DD4BF. (Replaced Scole Navy on 2026-11-23 at Kyungbin's request.) */
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css');
@@ -13,51 +13,56 @@
   --font: 'Inter', 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
   --mono: 'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace;
   --radius: 6px;
+  --sunset: linear-gradient(92deg, #ff5c8a 0%, #a855f7 52%, #ff9e57 100%);
 }
 
 [data-theme="dark"] {
   color-scheme: dark;
-  --bg: #0c1220;
-  --bg-side: #0a0f1b;
-  --bg-code: #080c15;
-  --bg-hover: #17223c;
-  --bg-active: #1f2e4f;
-  --fg: #edf1f7;
-  --fg-muted: #a7b1c4;
-  --fg-faint: #6e7b93;
-  --border: #1e2a44;
-  --accent: #93b4e0;
-  --accent-2: #c7d5ec;
-  --green: #9cc5a5;
-  --pink: #93b4e0;
-  --orange: #afa8e8;
-  --yellow: #9fbf8f;
-  --red: #de7a6d;
-  --mark: rgba(147, 180, 224, .28);
-  --shadow: 0 16px 48px rgba(2, 6, 14, .6);
+  --bg: #180b2a;
+  --bg-side: #130920;
+  --bg-code: #10071c;
+  --bg-hover: #281344;
+  --bg-active: #351c5c;
+  --fg: #f8eef6;
+  --fg-muted: #c7aecf;
+  --fg-faint: #9076a4;
+  --border: #3a2158;
+  --accent: #ff75b1;
+  --accent-2: #bda0ff;
+  --green: #36dec6;
+  --pink: #ff66a2;
+  --orange: #ffae52;
+  --yellow: #ffd05a;
+  --red: #ff7365;
+  --mark: rgba(255, 85, 140, .35);
+  --shadow: 0 16px 48px rgba(9, 2, 18, .68);
+  --sunset-text: linear-gradient(92deg, #ff5c8a 0%, #a855f7 52%, #ff9e57 100%);
 }
 
 [data-theme="light"] {
   color-scheme: light;
-  --bg: #f8f9fb;
-  --bg-side: #eff2f7;
-  --bg-code: #f0f3f8;
-  --bg-hover: #e4eaf2;
-  --bg-active: #d5dfee;
-  --fg: #0e1626;
-  --fg-muted: #48536a;
-  --fg-faint: #7a8699;
-  --border: #dce3ec;
-  --accent: #1e3a66;
-  --accent-2: #44679e;
-  --green: #3e7a4e;
-  --pink: #1e3a66;
-  --orange: #6558c0;
-  --yellow: #5c7228;
-  --red: #b3382e;
-  --mark: #dce9f9;
-  --shadow: 0 16px 48px rgba(14, 22, 38, .14);
+  --bg: #fff8ee;
+  --bg-side: #fcedda;
+  --bg-code: #fbead4;
+  --bg-hover: #fae1cb;
+  --bg-active: #f8cfe1;
+  --fg: #2e1438;
+  --fg-muted: #60446c;
+  --fg-faint: #98738e;
+  --border: #f0d4be;
+  --accent: #cc227d;
+  --accent-2: #7431e3;
+  --green: #0d8076;
+  --pink: #cc227d;
+  --orange: #c55e0b;
+  --yellow: #90710e;
+  --red: #c43729;
+  --mark: #facde0;
+  --shadow: 0 16px 48px rgba(94, 35, 74, .16);
+  --sunset-text: linear-gradient(92deg, #da2a74 0%, #7c3aed 52%, #e87f1f 100%);
 }
+
+::selection { background: #ff5c8a; color: #fff; }
 
 /* ---------- base ---------- */
 * { box-sizing: border-box; }
@@ -106,10 +111,15 @@ svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width:
   border-right: 1px solid var(--border);
   font-size: 13.5px;
 }
+.sidebar::before { content: ''; flex: none; height: 4px; background: var(--sunset); }
 .sb-head { padding: 14px 16px 8px; }
 .sb-brand { font: 600 14px var(--mono); color: var(--fg); }
 .sb-brand:hover { text-decoration: none; color: var(--accent); }
-.sb-prompt { color: var(--accent); }
+.sb-prompt {
+  background: var(--sunset-text);
+  -webkit-background-clip: text; background-clip: text;
+  color: transparent;
+}
 
 .sb-search {
   display: flex; align-items: center; gap: 8px;
@@ -286,7 +296,12 @@ pre .copy:hover { color: var(--fg); }
 .pager .label { display: block; margin-bottom: 2px; }
 
 /* ---------- lists / pages ---------- */
-.eyebrow { font: 12.5px var(--mono); color: var(--accent); margin: 0 0 8px; }
+.eyebrow {
+  font: 12.5px var(--mono); margin: 0 0 8px;
+  background: var(--sunset-text);
+  -webkit-background-clip: text; background-clip: text;
+  color: transparent;
+}
 .lede { color: var(--fg-muted); font-size: 16.5px; margin: 0 0 20px; }
 .stats { display: flex; flex-wrap: wrap; gap: 14px; font: 12.5px var(--mono); color: var(--fg-faint); margin: 0 0 40px; }
 .stats span + span::before { content: '·'; margin-right: 14px; color: var(--border); }

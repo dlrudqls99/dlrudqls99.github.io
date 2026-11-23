@@ -269,14 +269,14 @@
     if (sec) sec.hidden = false;
 
     var VAR_NAMES = ['--accent', '--accent-2', '--green', '--orange', '--yellow', '--red'];
-    var FALLBACK = ['#93b4e0', '#c7d5ec', '#9cc5a5', '#afa8e8', '#9fbf8f', '#de7a6d'];
+    var FALLBACK = ['#ff6ca4', '#bda0ff', '#36dec6', '#ff9550', '#ffd05a', '#ff7365'];
     var cs = getComputedStyle(document.documentElement);
     var cats = [];
     nodes.forEach(function (n) { if (cats.indexOf(n.category) < 0) cats.push(n.category); });
     var catColor = {};
     cats.forEach(function (c, k) { catColor[c] = cs.getPropertyValue(VAR_NAMES[k % VAR_NAMES.length]).trim() || FALLBACK[k % FALLBACK.length]; });
-    var fgColor = cs.getPropertyValue('--fg').trim() || '#edf1f7';
-    var borderColor = cs.getPropertyValue('--border').trim() || '#1e2a44';
+    var fgColor = cs.getPropertyValue('--fg').trim() || '#f8eef6';
+    var borderColor = cs.getPropertyValue('--border').trim() || '#3a2158';
 
     var ns = nodes.map(function (p, i) {
       return { url: p.url, title: p.title, cat: p.category, x: 0.5 + 0.3 * Math.cos(i / nodes.length * Math.PI * 2), y: 0.5 + 0.3 * Math.sin(i / nodes.length * Math.PI * 2), vx: 0, vy: 0, r: i === 0 ? 9 : 6, center: i === 0 };
