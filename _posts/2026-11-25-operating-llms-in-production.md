@@ -120,3 +120,4 @@ Two things I want to remember from writing this. First, the jitter line is one l
 Operating an LLM system is mostly not about the model. It is about the edges: how long things take and where the time goes, what happens when the API says no, and what the user sees when something breaks. None of that is glamorous, and all of it is the difference between a demo and a product.
 
 If someone asks me in an interview how I would run an LLM system in production, I finally have an answer that is not just "it works on my machine": measure the latency in pieces, design for the rate limit instead of being surprised by it, retry with backoff and jitter and never retry a bad request, cache what you can, and have a plan for the day the model is not there.
+
