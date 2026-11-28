@@ -5,24 +5,27 @@ date: 2026-11-17
 categories: [Programming, Fundamentals]
 tags: [python, data-structures, caching]
 ---
+I use dicts every single day, but when I tried to explain why they are fast, my answer was just "because lookup is O(1)." That felt weak, so I went back to the basics.
 
-I started reviewing CS basics again, one topic a day. Day 1 is hash tables.
+Day 1 of reviewing CS basics, one topic a day. The short version: hash tables are O(1) on average, not always — only if the hash is decent and the load factor stays under control.
 
-I use dicts every single day, but when I tried to explain *why* they are fast, my answer was just "because lookup is O(1)." That felt weak, so I went back to the basics. These are my notes.
+## One formula puts each key in its bucket
 
-## 1. The basic idea
-
-A hash table stores key–value pairs in an array of *buckets*. To place a key, you run it through a **hash function**, get a number, and take that number modulo the array size. The result is the index.
+A hash table stores key–value pairs in an array of buckets. To place a key, run it through a hash function, get a number, and take that number modulo the array size. The result is the index.
 
 ```python
 index = hash(key) % len(buckets)
 ```
 
-If the hash function spreads keys out evenly, each bucket has only one or two entries. Lookup is then simple: hash the key, jump to the bucket, check a couple of items. You pay a small cost (computing the hash) to skip searching through everything.
+If the hash function spreads keys out evenly, each bucket has only one or two entries. Lookup is then simple: hash the key, jump to the bucket, check a couple of items.
 
-## 2. Collisions are normal
+You pay a small cost — computing the hash — to skip searching through everything.
 
-Two different keys sometimes land in the same bucket. This is not a rare edge case. With enough keys, it always happens. There are two classic ways to handle it:
+## Collisions always happen, so the fix has to be built in
+
+Two different keys sometimes land in the same bucket. This is not a rare edge case. With enough keys, it always happens.
+
+There are two classic ways to handle it:
 
 - **Chaining** — each bucket holds a small list of entries, and lookup scans that short list.
 - **Open addressing** — if the bucket is taken, check the next slots until you find the key or an empty slot. Linear probing is the simplest version.
@@ -52,31 +55,37 @@ class HashMap:
         return default
 ```
 
-The bad case is worth remembering. If the hash function is poor — or an attacker makes many keys collide on purpose — everything ends up in one bucket and the table becomes a slow linked list with O(n) lookups. This attack is real (it's called hash flooding), and it is why Python randomizes the hash of strings for each process.
+The bad case is worth remembering. If the hash function is poor — or an attacker makes many keys collide on purpose — everything ends up in one bucket. The table becomes a slow linked list with O(n) lookups.
 
-## 3. Load factor and rehashing
+This attack is real. It is called hash flooding, and it is why Python randomizes the hash of strings for each process.
 
-The **load factor** is `entries / buckets`. As the table fills up, buckets get crowded and collisions grow. So implementations set a limit — 0.75 is common — and when the table passes it, they make a bigger array and **rehash** every key into the new one.
+## At 0.75 load factor, resize — and the average still holds
 
-Rehashing costs O(n), which sounds like it breaks the O(1) story. It doesn't, because of how rarely it happens. If the array doubles each time, the expensive resize is spread over all the inserts that came before it. So each insert is O(1) *on average*. That is the honest version of the claim: average O(1), if the hash is decent and the load factor stays under control.
+The load factor is `entries / buckets`. As the table fills up, buckets get crowded and collisions grow.
 
-## 4. Python dicts, specifically
+So implementations set a limit — 0.75 is common — and when the table passes it, they make a bigger array and rehash every key into the new one.
 
-Things I checked about the dict I use every day:
+Rehashing costs O(n), which sounds like it breaks the O(1) story. It does not, because of how rarely it happens. If the array doubles each time, the expensive resize is spread over all the inserts that came before it.
+
+So each insert is O(1) on average. That is the honest version of the claim: average O(1), if the hash is decent and the load factor stays under control.
+
+## Python dicts guarantee order, and lists cannot be keys
+
+Three things I checked about the dict I use every day:
 
 - `dict` uses open addressing, and since Python 3.7 it also remembers insertion order — that is a language guarantee, not luck.
 - Keys must be hashable. That is why lists can't be dict keys but tuples can.
 - String hashes are randomized per process, so never depend on a specific hash value.
 
-## 5. Where I actually use this
+## I already use hash tables in three places at work
 
-- **Deduplication.** When I index documents for a RAG pipeline, I keep a set of content hashes and drop duplicates before embedding them. A hash table doing quiet cleanup work.
-- **Caching.** An LLM response cache keys answers by a hash of the normalized prompt. The table gives fast lookup; the eviction policy is a separate problem (see the exercise below).
-- **Counting and grouping.** `Counter` and `defaultdict` are just dicts with a small policy on top.
+Deduplication: when I index documents for a RAG pipeline, I keep a set of content hashes and drop duplicates before embedding them. Caching: an LLM response cache keys answers by a hash of the normalized prompt — the table gives fast lookup, the eviction policy is separate (see the LRU exercise below). Counting and grouping: `Counter` and `defaultdict` are just dicts with a small policy on top.
 
-## 6. Exercise: an LRU cache
+## An LRU cache is O(1) access plus O(1) eviction
 
-This is the classic exercise, and it is also a pattern I really use: a cache with fixed size that removes the **least recently used** entry first. `OrderedDict` can move an entry to the end and pop from the front, both in O(1), so `get` and `put` stay O(1):
+This is the classic exercise, and it is also a pattern I really use: a cache with fixed size that removes the least recently used entry first.
+
+`OrderedDict` can move an entry to the end and pop from the front, both in O(1). So `get` and `put` stay O(1):
 
 ```python
 from collections import OrderedDict
@@ -100,13 +109,16 @@ class LRUCache:
             self.cache.popitem(last=False)  # evict least recently used
 ```
 
-The point I wrote down for myself: the hash table gives O(1) access, and the ordering gives O(1) eviction. Most real caches are this pair, plus extras — a TTL, a lock for threads, and so on.
+The hash table gives O(1) access, and the ordering gives O(1) eviction. Most real caches are this pair, plus extras — a TTL, a lock for threads, and so on.
 
-## Questions I should be able to answer
+## Four questions are the test for Day 1
 
-- What happens when collisions pile up, and how does the complexity change?
-- Why do we say "average O(1)" instead of just O(1)?
-- What triggers a resize, and why doesn't rehashing ruin the average?
-- How can an attacker hurt a hash table, and what do languages do about it?
+What happens when collisions pile up, and how does the complexity change? Why "average O(1)" instead of just O(1)? What triggers a resize, and why doesn't rehashing ruin the average? How can an attacker hurt a hash table, and what do languages do about it?
 
-If I can answer these without waving my hands, day 1 did its job.
+If I can answer these without waving my hands, Day 1 did its job.
+
+## What I took away
+
+Say "average O(1)," not just "O(1)."
+Keep the hash decent and the load factor under control.
+If I cannot explain it without waving my hands, I do not know it yet.

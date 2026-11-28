@@ -1,17 +1,30 @@
+{%- comment -%}
+  Maturity is earned with time, never with length: word count plays no part.
+  Inputs are the note's age and tending — how long after publishing the note
+  was last revisited (`last_modified_at:` / `updated:` front matter, or the
+  jekyll-last-modified-at plugin when enabled). A `growth:` pin in front
+  matter still wins. Separately, kb.js can promote a stage at runtime when
+  GoatCounter shows a note is genuinely read; it never demotes.
+    evergreen — a year old, or half a year old and still tended 3+ months in
+    growing   — 90+ days old, or revisited a month or more after publishing
+    seedling  — everything younger
+{%- endcomment -%}
 {%- assign g = include.post.growth | default: '' | strip -%}
 {%- if g == '' -%}
-  {%- assign w = include.post.content | strip_html | number_of_words -%}
   {%- assign post_epoch = include.post.date | date: '%s' | plus: 0 -%}
   {%- assign now_epoch = site.time | date: '%s' | plus: 0 -%}
   {%- assign age_days = now_epoch | minus: post_epoch | divided_by: 86400 -%}
-  {%- if w >= 1500 and age_days >= 180 -%}{%- assign g = 'evergreen' -%}
-  {%- elsif w >= 1500 -%}{%- assign g = 'growing' -%}
-  {%- elsif age_days >= 90 and w >= 800 -%}{%- assign g = 'growing' -%}
+  {%- assign tended = include.post.last_modified_at | default: include.post.updated | default: include.post.date -%}
+  {%- assign tended_epoch = tended | date: '%s' | plus: 0 -%}
+  {%- assign tend_span = tended_epoch | minus: post_epoch | divided_by: 86400 -%}
+  {%- if age_days >= 365 -%}{%- assign g = 'evergreen' -%}
+  {%- elsif age_days >= 180 and tend_span >= 90 -%}{%- assign g = 'evergreen' -%}
+  {%- elsif age_days >= 90 or tend_span >= 30 -%}{%- assign g = 'growing' -%}
   {%- else -%}{%- assign g = 'seedling' -%}{%- endif -%}
 {%- endif -%}
 {%- if include.raw -%}{{ g }}{%- else -%}
 {%- if g == 'evergreen' -%}{%- assign gemoji = '🌳' -%}{%- assign glabel = 'Evergreen' -%}
 {%- elsif g == 'growing' -%}{%- assign gemoji = '🌿' -%}{%- assign glabel = 'Growing' -%}
 {%- else -%}{%- assign gemoji = '🌱' -%}{%- assign glabel = 'Seedling' -%}{%- endif -%}
-{%- if include.compact -%}<span class="growth-emoji" title="{{ glabel }}">{{ gemoji }}</span>{%- else -%}<span class="growth-badge growth-{{ g }}">{{ gemoji }} {{ glabel }}</span>{%- endif -%}
+{%- if include.compact -%}<span class="growth-emoji" data-growth data-path="{{ include.post.url }}" title="{{ glabel }}">{{ gemoji }}</span>{%- else -%}<span class="growth-badge growth-{{ g }}" data-growth data-path="{{ include.post.url }}">{{ gemoji }} {{ glabel }}</span>{%- endif -%}
 {%- endif -%}

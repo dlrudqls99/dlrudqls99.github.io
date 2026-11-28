@@ -5,15 +5,19 @@ date: 2026-10-18
 categories: [Frontend, React]
 tags: [react, javascript, hooks]
 ---
-I've been studying React so I can start building my own apps. I kept running into words like "reconciliation" or "hydration" and nodding along without really getting them. Then I found this video from Coding2GO, and it helped a lot.
+I kept nodding at words like "reconciliation" and "hydration" without really getting them. Then a 12-minute video from Coding2GO filled in the gaps.
+
+That helped because React is one loop, not a pile of terms. The short version: components hold props and state, a state change triggers a re-render, and reconciliation makes that re-render cheap.
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/mOfWjc3SP6A" title="Every React Concept Explained in 12 Minutes" frameborder="0" allowfullscreen></iframe>
 
-It's only 12 minutes, but it covers almost everything. These are my notes. I wrote them so I can come back here later instead of watching it again.
+These are my notes from the video, so I can come back here instead of watching it again.
 
-## Components
+## Everything is a component, and components are just functions
 
-Everything in React is a component. A component is just a JavaScript function that returns markup. A button is a component, a navbar is a component, a whole page is a component. You build small pieces and put them together like Lego.
+A component is a JavaScript function that returns markup. A button is a component. A navbar is a component. A whole page is a component.
+
+You build small pieces and put them together like Lego.
 
 ```jsx
 function Greeting() {
@@ -21,21 +25,7 @@ function Greeting() {
 }
 ```
 
-## JSX
-
-The thing that looks like HTML inside JavaScript is JSX. It's not real HTML. It gets compiled to JavaScript calls. A few differences confused me at first:
-
-- `className` instead of `class`
-- attributes are camelCase (`onClick`, not `onclick`)
-- a component can only return **one** parent element
-
-For that last rule you can wrap things in a **Fragment** (`<>...</>`) so you don't add an extra `div` to the page.
-
-Curly braces `{}` let you put JavaScript inside JSX. Variables, function calls, ternaries for conditional rendering, all of it goes in there.
-
-## Props
-
-Props are how you pass data into a component. They work like function arguments.
+Props pass data into a component, like function arguments.
 
 ```jsx
 function Greeting({ name }) {
@@ -45,26 +35,19 @@ function Greeting({ name }) {
 <Greeting name="KB" />
 ```
 
-There's a special prop called `children`. Anything you put between the opening and closing tags goes into `children`. This is how you make layout components or wrappers.
+The special prop is `children`. Anything between the opening and closing tags goes into `children`. That is how you make layout components and wrappers.
 
-## Keys
+## JSX looks like HTML, but it is JavaScript
 
-When you render a list with `.map()`, each item needs a unique `key`. React uses it to know which item is which when the list changes. I used the array index at first. It works until you reorder or delete items, and then weird bugs start showing up. Use a real ID.
+JSX is not real HTML. It gets compiled to JavaScript calls.
 
-## Rendering and the Virtual DOM
+Three differences confused me at first. It uses `className` instead of `class`. Attributes are camelCase — `onClick`, not `onclick`. And a component can return only one parent element.
 
-This part finally made it click for me. React doesn't touch the real DOM directly every time something changes. It goes like this:
+For that last rule, wrap things in a Fragment (`<>...</>`) so you do not add an extra `div`. Curly braces `{}` put JavaScript inside JSX: variables, function calls, and ternaries for conditional rendering.
 
-1. State changes
-2. React builds a new **virtual DOM** (a lightweight copy in memory)
-3. It compares the new one with the old one. This is called **diffing**
-4. It updates only the parts of the real DOM that actually changed
+## Pass the function, do not call it
 
-The whole process is called **reconciliation**. That's why React is fast even when the UI updates a lot.
-
-## Event Handling
-
-You attach events with props like `onClick` or `onChange` and pass a function. Pass the function itself, don't call it:
+You attach events with props like `onClick` or `onChange` and pass a function. Pass the function itself. Do not call it:
 
 ```jsx
 <button onClick={handleClick}>Click</button>   // good
@@ -73,21 +56,36 @@ You attach events with props like `onClick` or `onChange` and pass a function. P
 
 I made this mistake more than once.
 
-## State
+Lists have a similar trap. When you render a list with `.map()`, each item needs a unique `key`, so React knows which item is which when the list changes.
 
-State is the data a component remembers between renders. A normal variable gets reset every render, so React gives us `useState`:
+I used the array index at first. It works until you reorder or delete items, and then weird bugs show up. Use a real ID.
+
+## State changes are what make React fast — and predictable
+
+React does not touch the real DOM every time something changes. It follows four steps:
+
+1. State changes.
+2. React builds a new virtual DOM, a lightweight copy in memory.
+3. It compares the new one with the old one. This is diffing.
+4. It updates only the parts of the real DOM that actually changed.
+
+The whole process is called reconciliation. That is why React stays fast even when the UI updates a lot.
+
+State is the data a component remembers between renders. A normal variable resets every render, so React gives us `useState`:
 
 ```jsx
 const [count, setCount] = useState(0);
 ```
 
-You always update it with the setter. Changing `count` directly does nothing, because React doesn't know it changed and won't re-render.
+Always update state with the setter. Changing `count` directly does nothing, because React does not know it changed and will not re-render.
 
-**Controlled components** are form inputs whose value comes from state. The input shows the state, and `onChange` updates the state. Then the state is the single source of truth.
+Controlled components follow the same rule. A form input shows the state, and `onChange` updates the state. The state is the single source of truth.
 
-## Hooks
+## Hooks follow two rules, and two of them do most of the work
 
-Hooks are functions that start with `use`. They can only be called at the top level of a component, not inside loops or `if` statements. The video groups them roughly like this:
+Hooks are functions that start with `use`. Call them only at the top level of a component, never inside loops or `if` statements.
+
+The video groups them roughly like this:
 
 - **State hooks**: `useState`, `useReducer`
 - **Context hook**: `useContext`
@@ -95,15 +93,9 @@ Hooks are functions that start with `use`. They can only be called at the top le
 - **Effect hook**: `useEffect`
 - **Performance hooks**: `useMemo`, `useCallback`
 
-I won't need all of them right away. `useState` and `useEffect` are the ones I use every day so far.
+I will not need all of them right away. So far, `useState` and `useEffect` are the ones I use every day.
 
-## Purity and Strict Mode
-
-A React component should be **pure**. Same input (props), same output (JSX). It shouldn't change outside variables while rendering.
-
-**Strict Mode** helps catch mistakes during development. It renders components twice on purpose so impure code shows up. At first I thought my code was broken because my `console.log` ran twice. Nope, it was just Strict Mode.
-
-## Effects
+## Effects are for leaving React, so use them only when you must
 
 `useEffect` is for talking to things outside React: fetching data, timers, subscriptions, browser APIs.
 
@@ -113,32 +105,40 @@ useEffect(() => {
 }, [id]);
 ```
 
-The array at the end is the dependency array. The effect runs again only when those values change. The video's advice, which I'm trying to follow: if you can do it without an effect, do it without an effect. A lot of my early `useEffect` calls were unnecessary.
+The array at the end is the dependency array. The effect runs again only when those values change.
 
-## Refs
+The video's advice is the rule I am trying to follow: if you can do it without an effect, do it without an effect. A lot of my early `useEffect` calls were unnecessary.
 
-`useRef` gives you a box that keeps a value between renders **without** causing a re-render. The common use is grabbing a real DOM element, for example to focus an input.
+Refs solve a different problem. `useRef` gives you a box that keeps a value between renders without causing a re-render. The common use is grabbing a real DOM element, for example to focus an input.
 
-## Context
+## Pure components make bugs easier to find
 
-Passing props down five levels just to reach one component is called **prop drilling**, and it gets messy fast. Context fixes this. You wrap a part of the tree in a provider, and any component inside can read the value with `useContext`. Theme and logged-in user are classic examples.
+A React component should be pure. Same input (props), same output (JSX). It should not change outside variables while rendering.
 
-## Portals
+Strict Mode helps catch mistakes during development. It renders components twice on purpose, so impure code shows up.
 
-A portal lets you render a component somewhere else in the DOM, outside its parent. Useful for modals, tooltips, and dropdowns that would otherwise get cut off by the parent's CSS.
+At first I thought my code was broken because my `console.log` ran twice. Nope, it was just Strict Mode.
 
-## Suspense and Error Boundaries
+## Context, portals, and fallbacks each fix one specific pain
 
-**Suspense** shows a fallback (like a spinner) while a component or its data is still loading.
+Passing props down five levels to reach one component is called prop drilling. It gets messy fast.
 
-**Error Boundaries** catch errors in part of the tree and show a fallback UI instead of crashing the whole app with a blank white screen.
+Context fixes it. Wrap part of the tree in a provider, and any component inside can read the value with `useContext`. Theme and logged-in user are the classic examples.
 
-## Server Components and Hydration
+A portal renders a component somewhere else in the DOM, outside its parent. It is useful for modals, tooltips, and dropdowns that would otherwise get cut off by the parent's CSS.
 
-The last part was about newer stuff. **Server Components** run on the server, so they can fetch data directly and send less JavaScript to the browser. **Hydration** is when React takes HTML that was already rendered on the server and attaches the event handlers in the browser so it becomes interactive. You mostly see these when using a framework like Next.js.
+Suspense shows a fallback, like a spinner, while a component or its data is still loading. Error Boundaries catch errors in part of the tree and show a fallback UI instead of crashing the whole app with a blank white screen.
 
-## What I Took Away
+## Server Components send less JavaScript, and hydration makes the page live
 
-What I liked about this video is that it shows how everything connects. Components use props and state, state changes trigger a re-render, and reconciliation makes that re-render cheap. Once that loop made sense, hooks and effects felt much less random.
+Server Components run on the server. They can fetch data directly and send less JavaScript to the browser.
 
-My plan now is to build a small app and actually use these instead of just reading about them. I'll probably come back and fix these notes once I get things wrong in practice.
+Hydration is what happens next. React takes HTML already rendered on the server and attaches the event handlers in the browser, so it becomes interactive.
+
+You mostly see these when using a framework like Next.js.
+
+## What I took away
+
+Build a small app and use these ideas, instead of just reading about them.
+State changes, re-renders, and reconciliation are the loop to remember.
+If I can do it without an effect, I will.

@@ -6,37 +6,71 @@ categories: [ai-agents]
 tags: [solution-design, discovery, fde, system-design]
 ---
 
-I used to start a design problem the same way every time: someone gives me a brief, and I start drawing boxes. Database here, API there, maybe a vector store if it sounds like a RAG problem. It felt productive. It was also backwards.
+I used to start every design problem the same way: someone gives me a brief, and I start drawing boxes. Database here, API there, maybe a vector store if it sounds like a RAG problem.
 
-The thing I kept missing is that a brief is not a spec. A brief is a sentence someone wrote when they were in a hurry, about a problem they feel more than they can describe. If I jump straight to architecture, I am solving the sentence, not the problem. And the sentence is usually wrong in at least one important way.
+It felt productive. It was backwards. The short version: a brief is not a spec, so ask who it is for, what success is in a number, what constraint could kill the design, and who owns it after you leave — before any architecture.
 
-I started this topic because an interviewer once asked me something that sounded simple — "a customer wants an AI system that reads their documents and answers questions" — and I answered with an architecture before I asked a single question about the customer. Looking back, that was the whole mistake. The architecture was fine. The answer was still wrong, because I had no idea what "works" meant to them.
+A brief is a sentence someone wrote in a hurry, about a problem they feel more than they can describe. If I jump straight to architecture, I solve the sentence, not the problem. The sentence is usually wrong in at least one important way.
 
-## The discovery questions I now ask first
+I learned this the slow way. A customer "wants an AI system that reads their documents and answers questions," and I answered with an architecture before asking a single question.
 
-I keep a short list now, and I actually write it down before a design discussion so I do not skip it under pressure. Four groups of questions.
+The architecture was fine. The answer was still wrong, because I had no idea what "works" meant to them.
 
-First, who is this for and what do they actually do today? Not "what is the use case" in the abstract — what does a person do on a Tuesday afternoon, and where does it hurt? A support agent answering the same question forty times a day has a different problem from a compliance officer who needs one answer a month to be exactly right. Same brief, completely different system.
+I keep a short list now. I write it down before a design discussion, so I do not skip it under pressure.
 
-Second, what does success look like, in a number? "Faster" is not a number. "Answer in under five seconds, correct 95% of the time, and cut escalations by a third" is a number, and it changes the design. If the customer cannot give me a number yet, that is fine — but then the first deliverable is finding the number, not building the system. I learned this the slow way: I once built something that was technically good and nobody could tell whether it helped, because we had never agreed on what "helped" meant.
+## Forty answers a day is not one exact answer a month
 
-Third, what are the constraints that will actually decide the design? This is the part I used to treat as an afterthought. Where does the data live, and can it leave that place? Who is allowed to see the answers? How much can it cost per request? What happens when the system is wrong — is a wrong answer annoying, or is it a compliance incident? In a locked-down environment, the answer to "can the data leave the building" can rule out half the architectures before you start. I would rather find that out in minute ten than in week six.
+First: who is this for, and what do they actually do today? Not "the use case" in the abstract — what a person does on a Tuesday afternoon, and where it hurts.
 
-Fourth, who decides, and what happens after I leave? A system that only works while I am in the room is not a delivered system. Who owns it, who maintains the eval set, who gets paged when it breaks — if those questions have no answer, the design is not finished, no matter how clean the diagram looks.
+A support agent answering the same question forty times a day has a different problem from a compliance officer who needs one answer a month to be exactly right. Same brief. Completely different system.
 
-## From answers to architecture — but only after
+## "Faster" is not a success metric
 
-Only after those questions do I start drawing boxes, and the nice thing is that the drawing gets easier. The discovery answers do most of the deciding for you.
+Second: what does success look like, in a number? "Faster" is not a number.
 
-If the data cannot leave the customer's network, you are looking at an on-prem or VPC deployment, and that rules out a whole class of managed services. If the answers need citations, retrieval is not optional, and you need to think about chunking and evaluation from day one. If the main pain is volume — hundreds of near-identical questions — caching and a small model might beat a big model with a fancy pipeline. If the pain is accuracy on rare, high-stakes questions, you spend your effort on evaluation and human review instead.
+"Answer in under five seconds, correct 95% of the time, and cut escalations by a third" is a number. It changes the design.
 
-The order matters more than the boxes. I have started thinking of it as a rule for myself: no architecture before I can write down the user, the success metric, and the one constraint that would kill the design. If I cannot write those three things down, I am not ready to design yet. I am still guessing.
+If the customer cannot give a number yet, that is fine. Then the first deliverable is finding the number, not building the system.
 
-There is also a smaller, practical habit that has helped me: write the brief back to the customer in my own words before proposing anything. "Here is what I heard you need, here is what success looks like, here is what I am assuming." It takes five minutes, and it catches misunderstandings when they are still cheap. People correct you generously at this stage. They correct you much less generously after you have built the wrong thing.
+I once built something technically good, and nobody could tell whether it helped. We had never agreed on what "helped" meant.
 
-## A small exercise: turning a vague brief into a checklist
+## One constraint can rule out half the architectures
 
-The thing I actually tried this week, in about fifteen minutes. Take a one-line brief — "build an AI assistant that answers questions about our product docs" — and turn it into a structured checklist with a tiny script. The point is not the code. The point is the habit of refusing to design from one sentence.
+Third: what are the constraints that will actually decide the design? I used to treat this as an afterthought.
+
+Where does the data live, and can it leave that place? Who is allowed to see the answers? How much can it cost per request?
+
+And what happens when the system is wrong? Is a wrong answer annoying, or is it a compliance incident?
+
+The answer to "can the data leave the building" can rule out half the architectures before you start. I would rather find that out in minute ten than in week six.
+
+## A system nobody owns after handover is not finished
+
+Fourth: who decides, and what happens after I leave? A system that only works while I am in the room is not a delivered system.
+
+Who owns it? Who maintains the eval set? Who gets paged when it breaks?
+
+If those questions have no answer, the design is not finished. It does not matter how clean the diagram looks.
+
+## The discovery answers do most of the designing
+
+Only after those questions do I draw boxes. The drawing gets easier, because the answers do most of the deciding.
+
+If the data cannot leave the customer's network, you are looking at on-prem or VPC deployment. That rules out a whole class of managed services.
+
+If the answers need citations, retrieval is not optional. You need to think about chunking and evaluation from day one.
+
+If the pain is volume — hundreds of near-identical questions — caching and a small model might beat a big model with a fancy pipeline. If the pain is accuracy on rare, high-stakes questions, you spend the effort on evaluation and human review instead.
+
+My rule: no architecture before I can write down the user, the success metric, and the one constraint that would kill the design. If I cannot write those three things down, I am not ready to design. I am still guessing.
+
+One smaller habit helps: write the brief back to the customer in my own words before proposing anything. "Here is what I heard you need, here is what success looks like, here is what I am assuming."
+
+It takes five minutes, and it catches misunderstandings while they are still cheap. People correct you generously at this stage — much less generously after you have built the wrong thing.
+
+## The checklist took fifteen minutes
+
+What I tried this week: take a one-line brief — "build an AI assistant that answers questions about our product docs" — and turn it into a structured checklist with a tiny script. The point is not the code. The point is refusing to design from one sentence.
 
 ```python
 # brief_checklist.py — turn a vague brief into discovery questions
@@ -98,10 +132,14 @@ if __name__ == "__main__":
     report(ANSWERS)
 ```
 
-Run it with everything marked "unknown" and it says the honest thing: do not design yet. Fill in a few answers — say, the docs cannot leave the customer's network, and a wrong answer is a compliance problem — and suddenly the architecture starts to narrow itself. That is the whole point. The checklist is not bureaucracy. It is the thing that stops you building a cloud RAG system for a customer whose data is not allowed to leave the building.
+Run it with everything marked "unknown" and it says the honest thing: do not design yet.
+
+Fill in a few answers — the docs cannot leave the customer's network, and a wrong answer is a compliance problem — and the architecture starts to narrow itself.
+
+The checklist is not bureaucracy. It is what stops you building a cloud RAG system for a customer whose data is not allowed to leave the building.
 
 ## What I took away
 
-Solution design does not start with a diagram. It starts with four questions: who is this for, what does success look like in a number, what constraints would kill the design, and who owns it after I leave. If I cannot answer those, I am guessing, and guessing with a nice architecture diagram is still guessing.
-
-The habit I want to keep is small: write the brief back in my own words, and do not draw a box until I can write down the user, the metric, and the one constraint that matters most. It feels slower than starting with the design. It is faster than rebuilding the wrong system.
+No box until I can write down the user, the metric, and the one constraint that matters most.
+I write the brief back in my own words before I propose anything.
+If I cannot answer those, I am still guessing.

@@ -249,6 +249,130 @@
     .catch(function () {});
 })();
 
+/* Maturity, part 2: reads can promote a note's stage.
+   The stage baked into the HTML is purely time-based (age + tending, see
+   _includes/growth.html) — length counts for nothing. GoatCounter's counts
+   are public for this site, so fetch each note's unique views and promote —
+   never demote — a note that is genuinely read:
+     >= 10 unique views   seedling -> growing
+     >= 50 unique views   growing  -> evergreen
+   Any failure (offline, counts made private) leaves the time stage as-is. */
+(function () {
+  var GC = 'https://dlrudqls99.goatcounter.com/counter';
+  var STAGES = ['seedling', 'growing', 'evergreen'];
+  var EMOJI = { seedling: '🌱', growing: '🌿', evergreen: '🌳' };
+  var LABEL = { seedling: 'Seedling', growing: 'Growing', evergreen: 'Evergreen' };
+  var marks = document.querySelectorAll('[data-growth]');
+  var garden = document.querySelector('.page.garden');
+  if (!marks.length && !garden) return;
+
+  function stageOfMark(el) {
+    for (var i = 0; i < STAGES.length; i++) {
+      if (el.classList.contains('growth-' + STAGES[i])) return STAGES[i];
+      if (el.getAttribute('title') === LABEL[STAGES[i]]) return STAGES[i];
+    }
+    return 'seedling';
+  }
+  function promoted(base, views) {
+    var i = STAGES.indexOf(base);
+    if (views != null && views >= 10 && i < 1) i = 1;
+    if (views != null && views >= 50 && i < 2) i = 2;
+    return STAGES[i];
+  }
+  function applyToMark(el, stage) {
+    if (el.classList.contains('growth-badge')) {
+      el.classList.remove('growth-seedling', 'growth-growing', 'growth-evergreen');
+      el.classList.add('growth-' + stage);
+      el.textContent = EMOJI[stage] + ' ' + LABEL[stage];
+    } else {
+      el.textContent = EMOJI[stage];
+      el.setAttribute('title', LABEL[stage]);
+    }
+  }
+  function fetchViews(path) {
+    var key = 'kb-gc:' + path;
+    try {
+      var hit = JSON.parse(sessionStorage.getItem(key) || 'null');
+      if (hit && Date.now() - hit.t < 6 * 3600 * 1000) return Promise.resolve(hit.v);
+    } catch (e) {}
+    return fetch(GC + path + '.json').then(function (r) { return r.json(); }).then(function (d) {
+      var v = parseInt(d && (d.count_unique != null ? d.count_unique : d.count), 10);
+      if (isNaN(v)) return null;
+      try { sessionStorage.setItem(key, JSON.stringify({ v: v, t: Date.now() })); } catch (e) {}
+      return v;
+    }).catch(function () { return null; });
+  }
+
+  // Base (time) stage per note path, from the rendered marks.
+  var base = {};
+  marks.forEach(function (el) { base[el.getAttribute('data-path')] = stageOfMark(el); });
+
+  // On the Garden page, also collect the by-stage lists so they can be
+  // regrouped, and take base stages from the sections for any note the
+  // sidebar did not cover.
+  var sections = null, items = [];
+  if (garden) {
+    sections = {};
+    garden.querySelectorAll('h3').forEach(function (h) {
+      var ul = h.nextElementSibling;
+      if (!ul || ul.tagName !== 'UL') return;
+      STAGES.forEach(function (s) {
+        if (h.textContent.indexOf(LABEL[s]) >= 0) sections[s] = ul;
+      });
+    });
+    if (!sections.seedling || !sections.growing || !sections.evergreen) sections = null;
+    if (sections) {
+      STAGES.forEach(function (s) {
+        sections[s].querySelectorAll('li').forEach(function (li) {
+          var a = li.querySelector('a[href]');
+          if (!a) return;
+          var path;
+          try { path = new URL(a.getAttribute('href'), location.origin).pathname; } catch (e) { return; }
+          var time = li.querySelector('time');
+          items.push({ li: li, path: path, when: time ? time.getAttribute('datetime') || '' : '' });
+          if (!(path in base)) base[path] = s;
+        });
+      });
+    }
+  }
+
+  var paths = Object.keys(base);
+  if (!paths.length) return;
+  Promise.all(paths.map(function (p) {
+    return fetchViews(p).then(function (v) { return { path: p, views: v }; });
+  })).then(function (rows) {
+    var finalStage = {};
+    rows.forEach(function (r) { finalStage[r.path] = promoted(base[r.path], r.views); });
+
+    marks.forEach(function (el) {
+      var s = finalStage[el.getAttribute('data-path')];
+      if (s && s !== stageOfMark(el)) applyToMark(el, s);
+    });
+
+    if (sections) {
+      // Redistribute the by-stage list items, newest first within a stage.
+      items.sort(function (a, b) { return a.when < b.when ? 1 : a.when > b.when ? -1 : 0; });
+      var counts = { seedling: 0, growing: 0, evergreen: 0 };
+      items.forEach(function (it) {
+        var s = finalStage[it.path] || base[it.path];
+        counts[s]++;
+        sections[s].appendChild(it.li);
+      });
+      var total = items.length || 1;
+      var bar = { seedling: '.seg-seed', growing: '.seg-grow', evergreen: '.seg-ever' };
+      STAGES.forEach(function (s) {
+        var seg = garden.querySelector(bar[s]);
+        if (seg) seg.style.width = (counts[s] * 100 / total) + '%';
+      });
+      garden.querySelectorAll('.stage-legend li').forEach(function (li) {
+        STAGES.forEach(function (s) {
+          if (li.textContent.indexOf(LABEL[s]) >= 0) li.textContent = EMOJI[s] + ' ' + LABEL[s] + ' · ' + counts[s];
+        });
+      });
+    }
+  }).catch(function () {});
+})();
+
 /* Local graph: this note and its tag-neighbours */
 (function () {
   var canvas = document.getElementById('local-graph');

@@ -6,55 +6,81 @@ categories: [ai-agents]
 tags: [llm, production, latency, reliability]
 ---
 
-The demo worked. That is the easy part. The demo runs on my laptop, with one user, no rate limits, and nobody watching the clock. Production is a different job entirely, and it is the part I had thought the least about until recently.
+The demo worked. That is the easy part.
 
-I started this topic because of a question I kept dodging in my own head: what happens when the model is slow, or the API says no, or the whole thing falls over at 2pm on a Tuesday? "It works" is not an answer to any of those. So I spent a few days learning how people actually operate LLM systems, and these are my notes.
+It ran on my laptop, with one user, no rate limits, and nobody watching the clock. Production is a different job. The short version: measure latency in pieces, design for rate limits, retry with backoff and jitter, cache what you can, and fail honestly when the model is gone.
 
-## Latency: first, find out where the time goes
+## An eight-second request has four different fixes
 
-The first mistake I made was treating latency as one number. It is not. A request that takes eight seconds could be slow for four completely different reasons, and each one has a different fix.
+Latency is not one number. A request that takes eight seconds could be slow for four different reasons, and each one has a different fix.
 
-The useful split is roughly this. Time to first token (TTFT) is how long until the user sees anything at all — this is what makes a system feel fast or slow. Time per output token (TPOT) is how fast the rest of the answer streams in. Then there is everything before the model even starts: the request sitting in a queue, the retrieval step in a RAG system, the tools being called.
+Time to first token (TTFT) is how long until the user sees anything. It is what makes a system feel fast or slow. Time per output token (TPOT) is how fast the rest of the answer streams in.
 
-What I found helpful is a simple rule: measure the pieces, not the total. Log TTFT, TPOT, retrieval time, and queue time separately. If TTFT is the problem, the prompt might be too long, or the first token is waiting on a slow retrieval. If TPOT is the problem, the model is generating a lot of tokens, and maybe the answer should be shorter. If the queue is the problem, you do not have a model problem at all — you have a capacity problem.
+Then there is everything before the model starts: the request sitting in a queue, the retrieval step in a RAG system, the tools being called. Log TTFT, TPOT, retrieval time, and queue time separately.
 
-One thing that surprised me: long prompts hurt twice. They cost more, and they slow down the first token, because the model has to process the whole prompt before it can say anything. That is the argument for keeping retrieval tight — send the model the three passages it needs, not the twenty it might need.
+If TTFT is the problem, the prompt may be too long, or the first token is waiting on slow retrieval. If TPOT is the problem, the model is generating a lot of tokens, and the answer should probably be shorter.
 
-## Rate limits: the 429 is not an error, it is a fact of life
+If the queue is the problem, you do not have a model problem. You have a capacity problem.
 
-Every LLM API has limits — requests per minute, tokens per minute — and you will hit them. I used to think of a 429 as something going wrong. It is not. It is the API telling you exactly how fast you are allowed to go.
+Long prompts hurt twice. They cost more, and they slow the first token, because the model has to process the whole prompt before it can say anything.
 
-The mental model that clicked for me is a token bucket. You have a bucket that refills at a fixed rate, and every request takes some tokens out of it. A short request costs a little, a long one costs a lot. When the bucket is empty, you wait. The point is not to avoid the limit — it is to design for it.
+That is the argument for tight retrieval. Send the model the three passages it needs, not the twenty it might need.
 
-In practice that means three things. Queue requests instead of firing them all at once. Track your usage so you know you are close to the limit before you hit it. And when you do get a 429, respect the Retry-After header instead of hammering the API again immediately. That last one sounds obvious, and I have still done the wrong thing in code more than once.
+## A 429 is a speed limit, not an error
 
-## Retries: the part everyone gets wrong
+Every LLM API has limits — requests per minute, tokens per minute — and you will hit them. A 429 is not something going wrong. It is the API telling you exactly how fast you are allowed to go.
 
-The naive retry is "try again, right away, three times." It feels reasonable and it is often the worst thing you can do. If the API is overloaded, three clients all retrying instantly just makes it more overloaded. This is the thundering herd problem, and it is embarrassingly easy to cause by accident.
+The model that clicked for me is a token bucket. The bucket refills at a fixed rate, and every request takes tokens out of it.
 
-The shape that actually works is exponential backoff with jitter. Wait a second, then two, then four — and add a random bit so not everyone retries at the same moment. The jitter is the part I used to skip. Without it, a hundred clients that failed together retry together, and you get the same spike, just delayed.
+A short request costs a little. A long one costs a lot. When the bucket is empty, you wait.
 
-There are also times when you should not retry at all. A 400 means your request is wrong — retrying it will not help. A request that already went through but timed out on the way back is the scary one: retrying it might run the same operation twice. That is why idempotency keys matter. If the operation has a side effect, give it a key, and the server can tell a retry from a new request. I never thought about this until I realized a retried request could double-charge something.
+So design for the limit. Queue requests instead of firing them all at once. Track usage, so you know you are close before you hit it.
 
-## Caching and batching: the boring wins
+And when you get a 429, respect the Retry-After header. Do not hammer the API again immediately.
 
-Not every request needs to hit the model. If users keep asking the same question, cache the answer. Some APIs also cache the prompt itself — if you send the same long system prompt every time, the provider may only charge you for processing it once. Both of these are easy wins that I kept putting off because they felt unglamorous. They are also the cheapest way to make a system faster and cheaper at the same time.
+That sounds obvious. I have still done the wrong thing in code more than once.
 
-Batching is the same idea on the other side. If you have fifty small jobs, sending them one at a time means fifty round trips. Grouping them, or using a batch API where the provider offers one, cuts the overhead. The tradeoff is latency for individual requests — batching is great for background jobs, bad for a user waiting on a screen.
+## Instant retries make an overload worse
 
-## Guardrails and graceful degradation
+The naive retry is "try again, right away, three times." If the API is overloaded, three clients retrying instantly make it more overloaded. That is the thundering herd problem, and it is embarrassingly easy to cause by accident.
 
-This is the part I like most, honestly, because it is about what the system does when things go wrong, and that is where good engineering shows.
+What works is exponential backoff with jitter. Wait a second, then two, then four — and add a random bit, so not everyone retries at the same moment.
 
-Guardrails are the checks around the model: input filters for things like prompt injection, output checks for disallowed content or PII, and validation that the output is in the format you asked for. I used to think of these as a separate security topic. In production they are an operations topic — they are what stands between a weird input and a bad outcome that a user sees.
+The jitter is the part I used to skip. Without it, a hundred clients that failed together retry together. You get the same spike, just delayed.
 
-Graceful degradation is the plan for when the model is unavailable or too slow. A few options I actually like: fall back to a smaller, cheaper model for non-critical requests. Serve a cached answer when the question has been seen before. Return a partial answer with a note that it is incomplete, instead of nothing at all. And sometimes the right answer is to say "I cannot do that right now" clearly, instead of timing out silently after thirty seconds.
+Some requests should not be retried at all. A 400 means your request is wrong. Retrying it will not help.
 
-The principle I keep coming back to: a system that fails honestly is better than a system that fails slowly. Users can work with "unavailable right now." They cannot work with a spinner that never ends.
+The scary case is a request that went through but timed out on the way back. Retrying it might run the same operation twice. A retried request could double-charge something.
 
-## A small experiment: a retry wrapper with backoff and a latency log
+That is why idempotency keys matter. If an operation has a side effect, give it a key. The server can then tell a retry from a new request.
 
-The thing I actually built this week, in about twenty minutes. A wrapper around an LLM call that retries with exponential backoff and jitter, logs the timing of each attempt, and gives up cleanly instead of hanging. It is small, but it is the kind of code I would want in production — and the kind I would want to explain in an interview.
+## Caching and batching are the cheapest speedups
+
+Not every request needs to hit the model. If users keep asking the same question, cache the answer.
+
+Some APIs also cache the prompt itself. If you send the same long system prompt every time, the provider may only charge you for processing it once.
+
+I kept putting these off because they felt unglamorous. They are the cheapest way to make a system faster and cheaper at the same time.
+
+Batching is the same idea on the other side. Fifty small jobs sent one at a time mean fifty round trips. Group them, or use a batch API where the provider offers one, and the overhead drops.
+
+The tradeoff is latency for individual requests. Batching is great for background jobs. It is bad for a user waiting on a screen.
+
+## A system that fails honestly beats one that hangs
+
+Guardrails are the checks around the model: input filters for things like prompt injection, output checks for disallowed content or PII, and validation that the output is in the format you asked for.
+
+I used to think of these as a security topic. In production they are an operations topic. They are what stands between a weird input and a bad outcome a user sees.
+
+Graceful degradation is the plan for when the model is unavailable or too slow. Fall back to a smaller, cheaper model for non-critical requests. Serve a cached answer when the question has been seen before.
+
+Return a partial answer with a note that it is incomplete, instead of nothing at all. And sometimes say "I cannot do that right now," clearly, instead of timing out silently after thirty seconds.
+
+Users can work with "unavailable right now." They cannot work with a spinner that never ends.
+
+## The retry wrapper took twenty minutes
+
+What I built this week: a wrapper around an LLM call that retries with exponential backoff and jitter, logs the timing of each attempt, and gives up cleanly instead of hanging. It is small. It is also the kind of code I would want in production.
 
 ```python
 # llm_client.py — a retry wrapper with backoff, jitter, and timing
@@ -113,11 +139,12 @@ def validate_prompt(prompt, max_chars=8000):
 #     # Fallback here: cached answer, smaller model, or an honest error.
 ```
 
-Two things I want to remember from writing this. First, the jitter line is one line of code and it is the difference between a retry storm and a polite queue. Second, the "gave up cleanly" branch matters as much as the retry logic. A wrapper that retries forever is just a slower way to fail.
+Two things stuck with me. The jitter line is one line of code, and it is the difference between a retry storm and a polite queue.
+
+The "gave up cleanly" branch matters as much as the retry logic. A wrapper that retries forever is just a slower way to fail.
 
 ## What I took away
 
-Operating an LLM system is mostly not about the model. It is about the edges: how long things take and where the time goes, what happens when the API says no, and what the user sees when something breaks. None of that is glamorous, and all of it is the difference between a demo and a product.
-
-If someone asks me in an interview how I would run an LLM system in production, I finally have an answer that is not just "it works on my machine": measure the latency in pieces, design for the rate limit instead of being surprised by it, retry with backoff and jitter and never retry a bad request, cache what you can, and have a plan for the day the model is not there.
-
+Measure latency in pieces, not as one number.
+Retry with backoff and jitter, and never retry a bad request.
+Cache what I can, and plan for the day the model is not there.

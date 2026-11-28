@@ -27,7 +27,7 @@ title: "About"
 
   <h2>Handy features</h2>
   <ul>
-    <li><strong>Garden</strong>: notes mature over time — 🌱 Seedling, 🌿 Growing, 🌳 Evergreen — judged automatically by length and age. The <a href="{{ '/garden/' | relative_url }}">Garden page</a> shows the whole picture.</li>
+    <li><strong>Garden</strong>: notes mature over time — 🌱 Seedling, 🌿 Growing, 🌳 Evergreen — judged automatically by age, tending and reads — never by length. The <a href="{{ '/garden/' | relative_url }}">Garden page</a> shows the whole picture.</li>
     <li><strong>Graph</strong>: the <a href="{{ '/graph/' | relative_url }}">graph view</a> draws notes as nodes and shared tags as edges. Each note also has a small local graph at the bottom.</li>
     <li><strong>Hover previews</strong>: hover any note link to peek at it, Obsidian-style.</li>
     <li><strong>Keyboard</strong>: <kbd>g</kbd> then <kbd>h</kbd> home, <kbd>a</kbd> all notes, <kbd>g</kbd> graph, <kbd>d</kbd> garden.</li>

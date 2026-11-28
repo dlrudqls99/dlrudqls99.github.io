@@ -6,9 +6,11 @@ categories: [Programming, Python]
 tags: [python, algorithms]
 ---
 
-When I practice problem solving, I keep coming back to the same handful of patterns. Then I noticed the same patterns show up in my real work too — rate limiters, stream parsers, schedulers. So I wrote them down in one place, each with the smallest example that shows the idea.
+When I practice problem solving, I keep coming back to the same handful of patterns. They show up in my real work too — rate limiters, stream parsers, schedulers.
 
-## 1. Top-K with a heap
+The short version: each pattern is a trade. Once I see which trade the problem is asking for, the code is usually short. I wrote them down in one place, each with the smallest example that shows the idea.
+
+## 1. A heap beats a full sort when only the top k matter
 
 **When:** "the k most frequent / largest / most recent" anything.
 
@@ -23,7 +25,7 @@ def top_k_frequent(items, k):
     return heapq.nlargest(k, counts.items(), key=lambda x: x[1])
 ```
 
-## 2. Sliding window
+## 2. A sliding window scans once, because it only moves forward
 
 **When:** a condition over a continuous range — longest substring without repeats, max sum of a fixed-size window, "at most N events in any 60 seconds."
 
@@ -41,7 +43,7 @@ def longest_unique(s: str) -> int:
 
 The window only moves forward, so the whole scan is O(n). Change the characters to timestamps and this same shape becomes a sliding-window rate limiter.
 
-## 3. BFS as a template
+## 3. Mark nodes as seen when they enter the queue, not when they leave
 
 **When:** shortest path in an unweighted graph or grid, or anything level by level.
 
@@ -62,9 +64,9 @@ def bfs(start, graph):
     return order
 ```
 
-One detail I got wrong before: mark nodes as seen when they go *into* the queue, not when they come out. Otherwise the same node gets added again and again and the work blows up.
+I got this wrong before: mark on the way out, and the same node gets added again and again. The work blows up.
 
-## 4. Token bucket rate limiter
+## 4. A token bucket allows bursts without falling over
 
 **When:** any "allow N operations per second" rule — API quotas, job dispatch, retry pacing. This one is worth knowing as real code, not just as an interview answer.
 
@@ -91,11 +93,11 @@ class TokenBucket:
         return False
 ```
 
-Tokens refill over time, and each request spends one. Simple, and it handles short bursts up to the bucket size without falling over.
+Tokens refill over time, and each request spends one. It handles short bursts up to the bucket size.
 
-## 5. Decoder sampling: greedy, top-k, top-p
+## 5. Temperature, top-k, and top-p are just ways of cutting a tail
 
-**When:** understanding how an LLM picks its next token. I wrote this while studying for interviews, because sampling questions kept coming up. Given logits, the whole thing is a small piece of NumPy:
+**When:** understanding how an LLM picks its next token. Given logits, the whole thing is a small piece of NumPy:
 
 ```python
 import numpy as np
@@ -120,11 +122,13 @@ def sample(logits, temperature=1.0, top_k=0, top_p=1.0, rng=None):
     return int(rng.choice(len(probs), p=probs))
 ```
 
-Greedy decoding is just the special case where you always take the argmax. Writing this once taught me more about temperature and top-p than any diagram did. The knobs finally made sense when I saw they are just ways of cutting the tail of a probability distribution.
+Greedy decoding is just the special case where you always take the argmax.
 
-## 6. Retry with exponential backoff
+Writing this once taught me more than any diagram did. The knobs made sense when I saw they cut the tail of a probability distribution.
 
-**When:** calling anything over a network. If every client retries at the same fixed interval, they all hit the server at the same time and make the problem worse. Backoff with a bit of randomness spreads them out.
+## 6. Backoff with randomness spreads retries out
+
+**When:** calling anything over a network. If every client retries at the same fixed interval, they all hit the server at the same time and make the problem worse.
 
 ```python
 import random, time
@@ -141,4 +145,4 @@ def call_with_retry(fn, attempts=4, base=0.5):
 
 ## What I took away
 
-Every pattern here is a trade. A heap trades a full sort for O(n log k). A sliding window trades remembering positions for a single pass. A token bucket trades perfect fairness for being simple. Most of problem solving, for me, is noticing which trade the problem is asking for. After that, the code is usually short.
+Every pattern here is a trade: a heap for a full sort, remembering positions for a single pass, perfect fairness for simplicity. I name the trade first; the code is usually short.

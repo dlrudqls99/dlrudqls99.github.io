@@ -6,7 +6,7 @@ permalink: /garden/
 
 <div class="page garden">
   <h1>🌱 Garden</h1>
-  <p class="lede">How this knowledge base is growing. Notes mature over time — 🌱 Seedling (fresh, still rough), 🌿 Growing (developing), 🌳 Evergreen (polished and stable). Pin a stage with <code>growth:</code> in a note's front matter; otherwise it is estimated from length and age.</p>
+  <p class="lede">How this knowledge base is growing. Notes mature over time — 🌱 Seedling (fresh, still rough), 🌿 Growing (developing), 🌳 Evergreen (polished and stable). Pin a stage with <code>growth:</code> in a note's front matter; otherwise it is worked out from age and tending — never from length — and a well-read note can be promoted.</p>
 
   {% assign total_words = 0 %}
   {% assign n_seed = 0 %}{% assign n_grow = 0 %}{% assign n_ever = 0 %}

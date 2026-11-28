@@ -6,11 +6,11 @@ categories: [AI, Agents]
 tags: [llm, tool-calling, ai-agents, python]
 ---
 
-Tool calling confused me at first because the name sounds like the model runs code. It doesn't. The model only writes a request: "call this tool with these arguments." My code is the one that runs it, and my code can also say no.
+Tool calling confused me at first because the name sounds like the model runs code. It doesn't.
 
-Once I understood that, agent frameworks stopped looking like magic. Most of them are this one loop with better packaging. These are my notes from building the loop by hand.
+The short version: the model only writes a request — "call this tool with these arguments." My code runs the tool, and my code can also say no. Once I understood that, agent frameworks stopped looking like magic. Most of them are this one loop with better packaging.
 
-## The loop
+## Five steps are the whole loop
 
 ```
 1. Send the user's question + a list of tool definitions to the model.
@@ -23,7 +23,7 @@ Once I understood that, agent frameworks stopped looking like magic. Most of the
 
 That is really the whole thing. Frameworks add state, retries, and nicer APIs on top, but the skeleton is these five steps.
 
-## A simple example: a Wikipedia search tool
+## One small tool is enough to learn it
 
 Say the user asks: *"Who was the second person to walk on the moon?"* The model might not know, so I give it one tool:
 
@@ -96,18 +96,36 @@ def ask(question: str, max_steps: int = 5) -> str:
     return "Stopped: too many steps."
 ```
 
-## The parts that matter in real systems
+## Model output is untrusted input, so check before you run anything
 
-**Check before you run anything.** The arguments come from a model, so they are untrusted input, same as text from a web form. I check the tool name against a list of allowed tools and validate the argument types. And anything with real side effects — sending mail, deleting data, paying for something — should need a human's approval, not run on its own.
+The arguments come from a model, so they are untrusted input, same as text from a web form. I check the tool name against a list of allowed tools and validate the argument types.
 
-**Always cap the loop.** A step limit and a timeout are not optional. Models sometimes bounce between two tools forever, and an agent that never stops just burns money.
+Anything with real side effects — sending mail, deleting data, paying for something — should need a human's approval, not run on its own.
 
-**Keep tools small and boring.** "Search Wikipedia and return a summary" works well. "Do research" does not. Small tools with clear descriptions get called correctly. Vague tools get called in creative ways I did not expect.
+## An uncapped loop just burns money
 
-**Log every step.** The question, the tool call, the arguments, the result, the final answer. When an agent does something wrong, the log is the only way to tell what happened: did the model choose the wrong tool, did the tool return junk, or was my parsing broken?
+A step limit and a timeout are not optional. Models sometimes bounce between two tools forever, and an agent that never stops just burns money.
 
-**Keep a history.** Saving each question and answer costs almost nothing, and it pays off the first time someone asks "what did it tell the user yesterday?" In-memory storage is fine for a study project. But the moment it matters, I write down what breaks when the process restarts — everything in memory is gone — and move to a real database.
+## Small, boring tools get called correctly
+
+"Search Wikipedia and return a summary" works well. "Do research" does not.
+
+Small tools with clear descriptions get called correctly. Vague tools get called in creative ways I did not expect.
+
+## Without logs, you cannot tell what went wrong
+
+Log every step: the question, the tool call, the arguments, the result, the final answer.
+
+When an agent does something wrong, the log is the only way to tell what happened. Did the model choose the wrong tool, did the tool return junk, or was my parsing broken?
+
+## History is cheap until the process restarts
+
+Saving each question and answer costs almost nothing. It pays off the first time someone asks "what did it tell the user yesterday?"
+
+In-memory storage is fine for a study project. The moment it matters, I move to a real database — everything in memory is gone when the process restarts.
 
 ## What I took away
 
-Building this loop by hand once was worth more than reading about three frameworks. Now when I look at a framework, I ask what it adds on top of these five steps: validation, limits, logging, well-designed tools. Sometimes the answer is "a lot." Sometimes it is "not much, but with nice docs." Either way, I can tell the difference now.
+Building the loop by hand once taught me more than reading about three frameworks.
+Now I ask what a framework adds: validation, limits, logging, well-designed tools.
+Sometimes the answer is "a lot." Sometimes it is "not much, but with nice docs."

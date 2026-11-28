@@ -31,6 +31,7 @@ plugins:
   - jekyll-sitemap
   - jekyll-feed
   - jekyll-include-cache
+  - jekyll-last-modified-at
   - jekyll-remote-theme
 
 defaults:

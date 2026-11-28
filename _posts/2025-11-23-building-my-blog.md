@@ -10,31 +10,19 @@ tags:
   - blogging
 ---
 
-I wanted one place to keep my study notes, somewhere I could come back to later. A blog on **GitHub Pages** with **Jekyll** made sense to me: it is free, posts are just Markdown files, and I already use GitHub every day.
+I wanted one place to keep my study notes. Writing a Markdown file and pushing it was all the publishing I wanted.
 
-These are the steps I followed to set mine up from nothing. The theme is [Minimal Mistakes](https://mmistakes.github.io/minimal-mistakes/), a clean theme that also works well on mobile.
+That is why I picked **GitHub Pages** with **Jekyll**. The short version: it is free, posts are just Markdown files, and I already use GitHub every day. The setup below took me longer than my first post — and most of the trouble was Ruby, not Jekyll.
 
-## Prerequisites
+You need three things first: a [GitHub account](https://github.com/), [Git](https://git-scm.com/) installed, and a basic understanding of the terminal.
 
-You need three things first:
-1. A [GitHub account](https://github.com/).
-2. [Git](https://git-scm.com/) installed on your computer.
-3. A basic understanding of using the terminal.
+## Name the repository exactly right, or Pages will not work
 
----
+Create a new repository on GitHub and name it `username.github.io`, where `username` is your actual GitHub username. This exact naming convention is required for GitHub Pages to work automatically.
 
-## Step 1: Create a GitHub Repository
+Make it **Public**. Check "Initialize this repository with a README," then click **Create repository**.
 
-1. Log in to GitHub and create a new repository.
-2. Name the repository `username.github.io`, where `username` is your actual GitHub username. 
-   > **Important**: This exact naming convention is required for GitHub Pages to work automatically.
-3. Make it **Public**.
-4. Check "Initialize this repository with a README".
-5. Click **Create repository**.
-
-## Step 2: Clone the Repository Locally
-
-Open your terminal and clone the repository to your local machine:
+Clone it locally:
 
 ```bash
 git clone https://github.com/username/username.github.io.git
@@ -43,11 +31,9 @@ cd username.github.io
 
 *(Replace `username` with your actual GitHub username)*
 
-## Step 3: Install Jekyll and Dependencies
+## Jekyll is a Ruby tool, so the Gemfile comes next
 
-Jekyll is a Ruby tool, so the dependencies go in a `Gemfile`.
-
-1. Create a file named `Gemfile` in the root of your repository with the following content:
+Create a file named `Gemfile` in the root of your repository:
 
    ```ruby
    source "https://rubygems.org"
@@ -55,7 +41,7 @@ Jekyll is a Ruby tool, so the dependencies go in a `Gemfile`.
    gem "github-pages", group: :jekyll_plugins
    ```
 
-2. Install the dependencies. Run this command in your terminal:
+Then install the dependencies:
 
    ```bash
    bundle install
@@ -66,11 +52,9 @@ Jekyll is a Ruby tool, so the dependencies go in a `Gemfile`.
    > arch -x86_64 bundle install
    > ```
 
-## Step 4: Configure the Blog
+## One file, `_config.yml`, holds all the settings
 
-The `_config.yml` file in the root directory holds all the blog's settings.
-
-This is the basic configuration I started with, using the Minimal Mistakes theme:
+I started with this basic configuration. The theme is [Minimal Mistakes](https://mmistakes.github.io/minimal-mistakes/), which is clean and works well on mobile.
 
 ```yaml
 title: "My Awesome Blog"
@@ -88,13 +72,9 @@ plugins:
   - jekyll-sitemap
 ```
 
-## Step 5: Create Your First Post
+## Posts live in `_posts`, and the filename format is strict
 
-Jekyll looks for blog posts in a `_posts` directory.
-
-1. Create a folder named `_posts`.
-2. Inside `_posts`, create a file named `2025-11-23-hello-world.md`. The filename format `YYYY-MM-DD-title.md` is strictly enforced.
-3. Add the following content:
+Create a folder named `_posts`. Inside it, create a file named `2025-11-23-hello-world.md` — the filename format `YYYY-MM-DD-title.md` is strictly enforced.
 
    ```markdown
    ---
@@ -107,9 +87,9 @@ Jekyll looks for blog posts in a `_posts` directory.
    Welcome to my new blog! This is my very first post.
    ```
 
-## Step 6: Run Locally
+## Run it locally before you push anything
 
-At this point I run it locally, to catch problems before pushing anything:
+A local run catches problems before they go live:
 
 ```bash
 bundle exec jekyll serve
@@ -122,10 +102,9 @@ bundle exec jekyll serve
 
 Open `http://127.0.0.1:4000` in your browser. If the blog shows up there, the setup works.
 
-## Step 7: Adding an About Page
+## An About page takes one more folder
 
-1. Create a folder named `_pages`.
-2. Inside `_pages`, create `about.md`:
+Create a folder named `_pages`, and inside it, `about.md`:
 
    ```markdown
    ---
@@ -136,11 +115,11 @@ Open `http://127.0.0.1:4000` in your browser. If the blog shows up there, the se
    Hi, I'm a developer passionate about...
    ```
 
-3. To make it appear in the navigation, you might need to adjust `_config.yml` or add navigation data, but Minimal Mistakes often picks up pages automatically or via `_data/navigation.yml`.
+To make it appear in the navigation, you might need to adjust `_config.yml` or add navigation data. Minimal Mistakes often picks up pages automatically, or via `_data/navigation.yml`.
 
-## Step 8: Deploy to GitHub
+## One push deploys the whole blog
 
-When it looks right locally, push it and the blog goes live.
+When it looks right locally, push it and the blog goes live:
 
 ```bash
 git add .
@@ -150,13 +129,13 @@ git push origin main
 
 Wait a minute or two, then visit `https://username.github.io`. The blog is live.
 
----
-
-## Troubleshooting
+## Two problems cover most failures
 
 - **404 Error**: Make sure your repository is named exactly `username.github.io`.
 - **Ruby Errors**: Ensure you have a compatible Ruby version installed. Using `rbenv` or `rvm` is recommended.
 
-## Looking Back
+## What I took away
 
-The setup took me longer than writing my first post. Most of my problems were Ruby version issues, not Jekyll issues. But once it runs, publishing is just writing a Markdown file and pushing it, which is exactly what I wanted.
+I run the blog locally before every push.
+Most setup problems are Ruby problems, not Jekyll problems.
+Once it runs, publishing is one Markdown file and one push.
