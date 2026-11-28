@@ -303,9 +303,9 @@
     }).catch(function () { return null; });
   }
 
-  // Base (time) stage per note path, from the rendered marks.
+  // Base (time) stage per note path. Garden sections (below) are
+  // authoritative; rendered marks only fill paths the sections did not cover.
   var base = {};
-  marks.forEach(function (el) { base[el.getAttribute('data-path')] = stageOfMark(el); });
 
   // On the Garden page, also collect the by-stage lists so they can be
   // regrouped, and take base stages from the sections for any note the
@@ -330,11 +330,16 @@
           try { path = new URL(a.getAttribute('href'), location.origin).pathname; } catch (e) { return; }
           var time = li.querySelector('time');
           items.push({ li: li, path: path, when: time ? time.getAttribute('datetime') || '' : '' });
-          if (!(path in base)) base[path] = s;
+          base[path] = s;
         });
       });
     }
   }
+
+  marks.forEach(function (el) {
+    var p = el.getAttribute('data-path');
+    if (!(p in base)) base[p] = stageOfMark(el);
+  });
 
   var paths = Object.keys(base);
   if (!paths.length) return;

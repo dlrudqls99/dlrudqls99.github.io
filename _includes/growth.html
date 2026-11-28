@@ -9,22 +9,22 @@
     growing   — 90+ days old, or revisited a month or more after publishing
     seedling  — everything younger
 {%- endcomment -%}
-{%- assign g = include.post.growth | default: '' | strip -%}
-{%- if g == '' -%}
-  {%- assign post_epoch = include.post.date | date: '%s' | plus: 0 -%}
-  {%- assign now_epoch = site.time | date: '%s' | plus: 0 -%}
-  {%- assign age_days = now_epoch | minus: post_epoch | divided_by: 86400 -%}
-  {%- assign tended = include.post.last_modified_at | default: include.post.updated | default: include.post.date -%}
-  {%- assign tended_epoch = tended | date: '%s' | plus: 0 -%}
-  {%- assign tend_span = tended_epoch | minus: post_epoch | divided_by: 86400 -%}
-  {%- if age_days >= 365 -%}{%- assign g = 'evergreen' -%}
-  {%- elsif age_days >= 180 and tend_span >= 90 -%}{%- assign g = 'evergreen' -%}
-  {%- elsif age_days >= 90 or tend_span >= 30 -%}{%- assign g = 'growing' -%}
-  {%- else -%}{%- assign g = 'seedling' -%}{%- endif -%}
+{%- assign gstage = include.post.growth | default: '' | strip -%}
+{%- if gstage == '' -%}
+  {%- assign g_post_epoch = include.post.date | date: '%s' | plus: 0 -%}
+  {%- assign g_now_epoch = site.time | date: '%s' | plus: 0 -%}
+  {%- assign g_age_days = g_now_epoch | minus: g_post_epoch | divided_by: 86400 -%}
+  {%- assign g_tended = include.post.last_modified_at | default: include.post.updated | default: include.post.date -%}
+  {%- assign g_tended_epoch = g_tended | date: '%s' | plus: 0 -%}
+  {%- assign g_tend_span = g_tended_epoch | minus: g_post_epoch | divided_by: 86400 -%}
+  {%- if g_age_days >= 365 -%}{%- assign gstage = 'evergreen' -%}
+  {%- elsif g_age_days >= 180 and g_tend_span >= 90 -%}{%- assign gstage = 'evergreen' -%}
+  {%- elsif g_age_days >= 90 or g_tend_span >= 30 -%}{%- assign gstage = 'growing' -%}
+  {%- else -%}{%- assign gstage = 'seedling' -%}{%- endif -%}
 {%- endif -%}
-{%- if include.raw -%}{{ g }}{%- else -%}
-{%- if g == 'evergreen' -%}{%- assign gemoji = '🌳' -%}{%- assign glabel = 'Evergreen' -%}
-{%- elsif g == 'growing' -%}{%- assign gemoji = '🌿' -%}{%- assign glabel = 'Growing' -%}
-{%- else -%}{%- assign gemoji = '🌱' -%}{%- assign glabel = 'Seedling' -%}{%- endif -%}
-{%- if include.compact -%}<span class="growth-emoji" data-growth data-path="{{ include.post.url }}" title="{{ glabel }}">{{ gemoji }}</span>{%- else -%}<span class="growth-badge growth-{{ g }}" data-growth data-path="{{ include.post.url }}">{{ gemoji }} {{ glabel }}</span>{%- endif -%}
+{%- if include.raw -%}{{ gstage }}{%- else -%}
+{%- if gstage == 'evergreen' -%}{%- assign g_emoji = '🌳' -%}{%- assign g_label = 'Evergreen' -%}
+{%- elsif gstage == 'growing' -%}{%- assign g_emoji = '🌿' -%}{%- assign g_label = 'Growing' -%}
+{%- else -%}{%- assign g_emoji = '🌱' -%}{%- assign g_label = 'Seedling' -%}{%- endif -%}
+{%- if include.compact -%}<span class="growth-emoji" data-growth data-path="{{ include.post.url }}" title="{{ g_label }}">{{ g_emoji }}</span>{%- else -%}<span class="growth-badge growth-{{ gstage }}" data-growth data-path="{{ include.post.url }}">{{ g_emoji }} {{ g_label }}</span>{%- endif -%}
 {%- endif -%}

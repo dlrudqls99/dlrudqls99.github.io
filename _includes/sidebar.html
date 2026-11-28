@@ -18,11 +18,11 @@
 
   <p class="sb-section">Notes</p>
   {% assign groups = site.posts | group_by_exp: "p", "p.categories | first | default: 'Misc'" | sort: "name" %}
-  {% for g in groups %}
+  {% for grp in groups %}
   <details class="sb-group" open>
-    <summary><span class="chev"></span>{{ g.name }}<span class="count">{{ g.items.size }}</span></summary>
+    <summary><span class="chev"></span>{{ grp.name }}<span class="count">{{ grp.items.size }}</span></summary>
     <ul>
-      {% for p in g.items %}
+      {% for p in grp.items %}
       <li><a class="sb-link{% if p.url == page.url %} active{% endif %}" href="{{ p.url | relative_url }}">{{ p.title }}{% include growth.html post=p compact=true %}</a></li>
       {% endfor %}
     </ul>
